@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { db, auth } from "./firebase";
+import { setDoc, doc } from "firebase/firestore";
 
 import "tailwindcss/tailwind.css";
 
@@ -17,7 +18,19 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      // création de l'utilisateur
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // ajout de l'utilisateur à firestore avec le role (par défaut user)
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        role: "user",
+      });
 
       router.push("/login");
     } catch (error) {
