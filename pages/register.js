@@ -7,7 +7,7 @@ import "tailwindcss/tailwind.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function SignIn() {
+export default function Login() {
   /* état local */
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +23,6 @@ export default function SignIn() {
         password
       );
       console.log(response);
-      router.push("/");
     } catch (error) {
       console.error(error.code, error.message);
     }
