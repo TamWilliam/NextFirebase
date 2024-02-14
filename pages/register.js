@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebase";
+import { db, auth } from "./firebase";
 
 import "tailwindcss/tailwind.css";
 
@@ -17,22 +17,16 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      /* authentification réussie */
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      console.log(response);
+      await createUserWithEmailAndPassword(auth, email, password);
+
       router.push("/login");
-    } catch (error) { /* affichage de l'erreur */
+    } catch (error) {
       console.error(error.code, error.message);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <h1>Créer son compte</h1>
       <form
         onSubmit={handleSignUp}
         className="max-w-md p-4 bg-white shadow-md rounded-md"
@@ -61,7 +55,7 @@ export default function Register() {
 
         <button
           type="submit"
-          className="w-full mt-4 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
+          className="text-center text-4xl p-3 text-amber-100 rounded-md w-full bg-green-400 hover:bg-blue-500"
         >
           S'enregistrer
         </button>
