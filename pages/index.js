@@ -1,9 +1,27 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
+import { useEffect } from "react";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "./firebase";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  useEffect(() => {
+    createUserWithEmailAndPassword(
+      auth,
+      "pleroy030@gmail.com",
+      "password"
+    ).then((response) => {
+      console.log(response);
+    });
+
+    return () => {};
+  }, []);
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
