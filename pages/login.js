@@ -32,6 +32,7 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
+      <h1>Se connecter</h1>
       <form onSubmit={handleSignIn} className="max-w-md p-4 bg-white shadow-md rounded-md">
         <label className="block mb-2 text-sm font-medium text-gray-600">
           Adresse mail :

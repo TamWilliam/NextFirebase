@@ -32,6 +32,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
+      <h1>Créer son compte</h1>
       <form
         onSubmit={handleSignUp}
         className="max-w-md p-4 bg-white shadow-md rounded-md"
