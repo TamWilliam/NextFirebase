@@ -32,53 +32,48 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="max-w-md p-4 bg-white shadow-md rounded-md">
-        <h1 className="text-center text-3xl font-semibold text-gray-800 mb-4">
-          Se connecter
-        </h1>
-        <form
-          onSubmit={handleSignIn}
-          className="max-w-md p-4 bg-white shadow-md rounded-md"
+      <form
+        onSubmit={handleSignIn}
+        className="max-w-md p-4 bg-white shadow-md rounded-md"
+      >
+        <label className="block mb-2 text-sm font-medium text-gray-600">
+          Adresse mail :
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
+            required
+          />
+        </label>
+
+        <label className="block mb-2 text-sm font-medium text-gray-600">
+          Mot de passe :
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
+            required
+          />
+        </label>
+
+        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+        <button
+          type="submit"
+          className="text-center text-4xl p-3 text-amber-100 rounded-md w-full bg-green-400 hover:bg-blue-500"
         >
-          <label className="block mb-2 text-sm font-medium text-gray-600">
-            Adresse mail :
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-              required
-            />
-          </label>
+          Connexion
+        </button>
 
-          <label className="block mb-2 text-sm font-medium text-gray-600">
-            Mot de passe :
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-              required
-            />
-          </label>
-
-          {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-
-          <button
-            type="submit"
-            className="w-full mt-4 bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600"
-          >
-            Connexion
-          </button>
-
-          <p className="text-gray-600 text-sm mt-2">
-            Pas de compte ?{" "}
-            <Link legacyBehavior href="/register">
-              <a style={{ textDecoration: "underline" }}>Créer un compte</a>
-            </Link>
-          </p>
-        </form>
-      </div>
+        <p className="text-gray-600 text-sm mt-2">
+          Pas de compte ?{" "}
+          <Link legacyBehavior href="/register">
+            <a style={{ textDecoration: "underline" }}>Créer un compte</a>
+          </Link>
+        </p>
+      </form>
     </div>
   )
 }
