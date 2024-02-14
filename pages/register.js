@@ -1,29 +1,31 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
-import { createUserWithEmailAndPassword } from "firebase/auth"; /* créer un utilisateur */
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebase";
 
 import "tailwindcss/tailwind.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Login() {
-  /* état local */
+export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
-  /* gestion de la soumission de la création du form */
   const handleSignUp = async (e) => {
     e.preventDefault();
 
     try {
+      /* authentification réussie */
       const response = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       console.log(response);
-    } catch (error) {
+      router.push("/login");
+    } catch (error) { /* affichage de l'erreur */
       console.error(error.code, error.message);
     }
   };
