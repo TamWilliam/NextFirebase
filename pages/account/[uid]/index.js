@@ -40,7 +40,7 @@ export default function Account() {
     fetchUserData();
   }, [uid]);
 
-  const userRole = userData?.role || "utilisateur";
+  const userRole = userData?.role || "client";
 
   const handlePublishProduct = async (e) => {
     e.preventDefault();
