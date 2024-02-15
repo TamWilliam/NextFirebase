@@ -24,7 +24,7 @@ const Navbar = () => {
           <li>
             {auth.currentUser ? (
               <div className="flex items-center">
-                <Link href="/profile">
+                <Link href={`/account/${auth.currentUser.uid}`}>
                   <span className="text-white mr-4">
                     {auth.currentUser.email}
                   </span>
