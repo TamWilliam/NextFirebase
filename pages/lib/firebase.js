@@ -1,29 +1,37 @@
-// pages/lib/firebase.js
-
 import { useEffect, useState } from "react"
 import { getApps, getApp, initializeApp } from "firebase/app"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
+import {
+  getAuth,
+  onAuthStateChanged,
+  browserLocalPersistence,
+  setPersistence,
+} from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 
-// Vérifier si une application Firebase est déjà initialisée
-const firebaseApp = getApps().length
-  ? getApp()
-  : initializeApp({
-      apiKey: "AIzaSyAnxVe_3H7Ypf0dJcQZO1kegQWv3KWTgQk",
-      authDomain: "e-commerce-a2e5f.firebaseapp.com",
-      projectId: "e-commerce-a2e5f",
-      storageBucket: "e-commerce-a2e5f.appspot.com",
-      messagingSenderId: "289054162281",
-      appId: "1:289054162281:web:4d2e2d8666ba7e26e411f8",
-      measurementId: "G-7F8LJFTQ42",
-    })
+// Configuration Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyAnxVe_3H7Ypf0dJcQZO1kegQWv3KWTgQk",
+  authDomain: "e-commerce-a2e5f.firebaseapp.com",
+  projectId: "e-commerce-a2e5f",
+  storageBucket: "e-commerce-a2e5f.appspot.com",
+  messagingSenderId: "289054162281",
+  appId: "1:289054162281:web:4d2e2d8666ba7e26e411f8",
+  measurementId: "G-7F8LJFTQ42",
+}
 
-// Récupérer l'instance de l'authentification
+// Initialisation de l'application Firebase
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
-const db = getFirestore(app)
+
+// Récupération de l'instance de l'authentification
 const auth = getAuth(app)
 
-// Créer un hook pour gérer l'authentification de l'utilisateur
+// Configuration de la persistance de l'authentification
+setPersistence(auth, browserLocalPersistence)
+
+// Récupération de l'instance de Firestore
+const db = getFirestore(app)
+
+// Hook personnalisé pour gérer l'authentification de l'utilisateur
 const useAuth = () => {
   const [user, setUser] = useState(null)
 
@@ -39,4 +47,4 @@ const useAuth = () => {
   return { user }
 }
 
-export { firebaseApp, auth, db, useAuth }
+export { app, auth, db, useAuth }
