@@ -1,40 +1,47 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./lib/firebase";
-import Link from "next/link";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { db, auth } from "./lib/firebase";
+import { setDoc, doc } from "firebase/firestore";
 
 import "tailwindcss/tailwind.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function SignIn() {
+export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
   const router = useRouter();
 
-  const handleSignIn = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
 
     try {
-      console.log(auth, email, password);
-      signInWithEmailAndPassword(auth, email, password).then((response) => {
-        /* redirection sur account.js */
-        router.push(`/account/[uid]`, `/account/${response.user.uid}`);
-        console.log(response.user.uid);
+      // création de l'utilisateur
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // ajout de l'utilisateur à firestore avec le role (par défaut user)
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        role: "user",
       });
+
+      router.push("/login");
     } catch (error) {
       console.error(error.code, error.message);
-      setError("Mail ou mot de passe incorrect.");
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <form
-        onSubmit={handleSignIn}
+        onSubmit={handleSignUp}
         className="max-w-md p-4 bg-white shadow-md rounded-md"
       >
         <label className="block mb-2 text-sm font-medium text-gray-600">
@@ -59,21 +66,12 @@ export default function SignIn() {
           />
         </label>
 
-        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-
         <button
           type="submit"
           className="text-center text-4xl p-3 text-amber-100 rounded-md w-full bg-green-400 hover:bg-blue-500"
         >
-          Connexion
+          S'enregistrer
         </button>
-
-        <p className="text-gray-600 text-sm mt-2">
-          Pas de compte ?{" "}
-          <Link legacyBehavior href="/register">
-            <a style={{ textDecoration: "underline" }}>Créer un compte</a>
-          </Link>
-        </p>
       </form>
     </div>
   );
