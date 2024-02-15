@@ -1,21 +1,19 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { Inter } from "next/font/google";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { db, auth } from "./lib/firebase";
-import { setDoc, doc } from "firebase/firestore";
+import { useState } from "react"
+import { useRouter } from "next/router"
+import { Inter } from "next/font/google"
+import { createUserWithEmailAndPassword } from "firebase/auth"
+import { db, auth } from "./lib/firebase"
+import { setDoc, doc } from "firebase/firestore"
 
-import "tailwindcss/tailwind.css";
-
-const inter = Inter({ subsets: ["latin"] });
+import "tailwindcss/tailwind.css"
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const router = useRouter()
 
   const handleSignUp = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
       // création de l'utilisateur
@@ -23,20 +21,20 @@ export default function Register() {
         auth,
         email,
         password
-      );
-      const user = userCredential.user;
+      )
+      const user = userCredential.user
 
       // ajout de l'utilisateur à firestore avec le role (par défaut user)
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         role: "user",
-      });
+      })
 
-      router.push("/login");
+      router.push("/login")
     } catch (error) {
-      console.error(error.code, error.message);
+      console.error(error.code, error.message)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -74,5 +72,5 @@ export default function Register() {
         </button>
       </form>
     </div>
-  );
+  )
 }

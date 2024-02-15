@@ -1,35 +1,34 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { Inter } from "next/font/google";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./lib/firebase";
-import Link from "next/link";
+import { useState } from "react"
+import { useRouter } from "next/router"
+import { Inter } from "next/font/google"
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { auth } from "./lib/firebase"
+import Link from "next/link"
 
-import "tailwindcss/tailwind.css";
+import "tailwindcss/tailwind.css"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
 export default function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const router = useRouter();
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState(null)
+  const router = useRouter()
 
   const handleSignIn = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
-      console.log(auth, email, password);
+      console.log(auth, email, password)
       signInWithEmailAndPassword(auth, email, password).then((response) => {
-        /* redirection sur account.js */
-        router.push(`/account/[uid]`, `/account/${response.user.uid}`);
-        console.log(response.user.uid);
-      });
+        router.push(`/`)
+        console.log(response.user.uid)
+      })
     } catch (error) {
-      console.error(error.code, error.message);
-      setError("Mail ou mot de passe incorrect.");
+      console.error(error.code, error.message)
+      setError("Mail ou mot de passe incorrect.")
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -76,5 +75,5 @@ export default function SignIn() {
         </p>
       </form>
     </div>
-  );
+  )
 }
