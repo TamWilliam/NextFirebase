@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { Inter } from "next/font/google";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./lib/firebase";

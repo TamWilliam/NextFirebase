@@ -1,7 +1,7 @@
 import { Inter } from "next/font/google";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
