@@ -1,16 +1,16 @@
-import React from "react"
-import Link from "next/link"
-import { auth } from "../pages/lib/firebase"
+import React from "react";
+import Link from "next/link";
+import { auth } from "../pages/lib/firebase";
 
 const Navbar = () => {
   const handleSignOut = async () => {
     try {
-      await auth.signOut()
-      window.location.reload()
+      await auth.signOut();
+      window.location.reload();
     } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error)
+      console.error("Erreur lors de la déconnexion :", error);
     }
-  }
+  };
 
   return (
     <nav className="bg-gray-800 p-4">
@@ -19,6 +19,11 @@ const Navbar = () => {
           <li>
             <Link href="/">
               <span className="text-white font-bold">Accueil</span>
+            </Link>
+          </li>
+          <li>
+            <Link href="/voirProduits">
+              <span className="text-white">Boutique</span>
             </Link>
           </li>
           <li>
@@ -47,7 +52,7 @@ const Navbar = () => {
         </ul>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
