@@ -6,7 +6,7 @@ import { setDoc, doc } from 'firebase/firestore'
 
 import 'tailwindcss/tailwind.css'
 
-export default function Register () {
+export default function Register() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const router = useRouter()

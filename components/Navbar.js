@@ -22,8 +22,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            {auth.currentUser
-              ? (
+            {auth.currentUser ? (
               <div className="flex items-center">
                 <Link href="/profile">
                   <span className="text-white mr-4">
@@ -34,8 +33,7 @@ const Navbar = () => {
                   Déconnexion
                 </button>
               </div>
-                )
-              : (
+            ) : (
               <>
                 <Link href="/login">
                   <span className="text-white">Connexion</span>
@@ -44,7 +42,7 @@ const Navbar = () => {
                   <span className="text-white ml-4">Inscription</span>
                 </Link>
               </>
-                )}
+            )}
           </li>
         </ul>
       </div>

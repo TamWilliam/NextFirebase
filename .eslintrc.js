@@ -5,16 +5,15 @@ module.exports = {
   },
   extends: [
     'standard',
-    'plugin:react/recommended'
+    'plugin:react/recommended',
+    'plugin:prettier/recommended'
   ],
   overrides: [
     {
       env: {
         node: true
       },
-      files: [
-        '.eslintrc.{js,cjs}'
-      ],
+      files: ['.eslintrc.{js,cjs}'],
       parserOptions: {
         sourceType: 'script'
       }
@@ -24,15 +23,15 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module'
   },
-  plugins: [
-    'react'
-  ],
+  plugins: ['react', 'prettier'],
   settings: {
     react: {
       version: 'detect'
     }
   },
   rules: {
-    'react/prop-types': ['error', { skipUndeclared: true }]
+    'react/prop-types': ['error', { skipUndeclared: true }],
+    'react/no-unescaped-entities': 'off',
+    '@next/next/no-page-custom-font': 'off'
   }
 }

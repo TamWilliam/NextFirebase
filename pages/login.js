@@ -6,7 +6,7 @@ import Link from 'next/link'
 
 import 'tailwindcss/tailwind.css'
 
-export default function SignIn () {
+export default function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)

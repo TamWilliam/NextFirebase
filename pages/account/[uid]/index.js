@@ -7,7 +7,7 @@ import { getStorage, ref, uploadBytes } from 'firebase/storage'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Account () {
+export default function Account() {
   const router = useRouter()
   const { uid } = router.query
   const [userData, setUserData] = useState(null)
@@ -46,10 +46,7 @@ export default function Account () {
 
     try {
       const storage = getStorage()
-      const imageRef = ref(
-        storage,
-        `Images/${generateUniqueFileName()}`
-      )
+      const imageRef = ref(storage, `Images/${generateUniqueFileName()}`)
       await uploadBytes(imageRef, selectedImageFile)
 
       const productDetails = {
