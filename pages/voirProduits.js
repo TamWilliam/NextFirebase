@@ -18,7 +18,7 @@ export default function VoirProduits() {
                     imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl));
                 } catch (error) {
                     console.error("Error fetching image URL:", error);
-                    imageUrl = 'Images/Products/Pierre/background.jpg';
+                    data.imageUrl = 'Images/visu-indispo.png';
                 }
                 return { id: doc.id, ...data, imageUrl };
             }));
