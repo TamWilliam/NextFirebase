@@ -19,11 +19,12 @@ export default function SignIn() {
     e.preventDefault()
 
     try {
-      const response = await signInWithEmailAndPassword(auth, email, password)
-      console.log(response)
-
-      /* redirection sur index.js */
-      router.push("/")
+      console.log(auth, email, password)
+      signInWithEmailAndPassword(auth, email, password).then((response) => {
+        /* redirection sur account.js */
+        router.push(`/account/${response.user.uid}`)
+        console.log(response.user.uid)
+      })
     } catch (error) {
       console.error(error.code, error.message)
       setError("Mail ou mot de passe incorrect.")
