@@ -22,7 +22,7 @@ export default function SignIn() {
       console.log(auth, email, password);
       signInWithEmailAndPassword(auth, email, password).then((response) => {
         /* redirection sur account.js */
-        router.push(`/account/${response.user.uid}`);
+        router.push(`/account/[uid]`, `/account/${response.user.uid}`);
         console.log(response.user.uid);
       });
     } catch (error) {
