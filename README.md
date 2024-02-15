@@ -2,6 +2,18 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+Start with docker command
+
+docker login //connexion docker
+
+docker build -t e-commerce:latest .  //création du container
+
+docker run -d -p 3000:3000 e-commerce  //on lance le container sur le port 3000
+
+docker ps  //liste des container actif
+
+docker stop "ID container"  //arret du container
+
 First, run the development server:
 
 ```bash
