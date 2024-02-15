@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useRouter } from "next/router"
 import { Inter } from "next/font/google"
 import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from "./firebase"
+import { auth } from "./lib/firebase"
 import Link from "next/link"
 
 import "tailwindcss/tailwind.css"
@@ -21,8 +21,7 @@ export default function SignIn() {
     try {
       console.log(auth, email, password)
       signInWithEmailAndPassword(auth, email, password).then((response) => {
-        /* redirection sur account.js */
-        router.push(`/account/${response.user.uid}`)
+        router.push(`/`)
         console.log(response.user.uid)
       })
     } catch (error) {
