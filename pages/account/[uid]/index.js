@@ -44,7 +44,7 @@ export default function Account() {
           <h2 className={`mb-3 text-2xl font-semibold`}>Bienvenue</h2>
           <p className={`m-0 max-w-[30ch] text-sm`}>
             {`Bienvenue, vous êtes ${
-              userRole === "admin" ? "administrateur" : "utilisateur"
+              userRole === "vendeur" ? "vendeur" : "client"
             }`}
           </p>
         </div>
