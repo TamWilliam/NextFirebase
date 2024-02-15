@@ -20,10 +20,8 @@ const Navbar = () => {
             <Link href="/">
               <span className="text-white font-bold">Accueil</span>
             </Link>
-          </li>
-          <li>
             <Link href="/voirProduits">
-              <span className="text-white">Boutique</span>
+              <span className="ml-5 text-white">Boutique</span>
             </Link>
           </li>
           <li>
