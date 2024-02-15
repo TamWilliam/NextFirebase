@@ -1,4 +1,3 @@
-// pages/account.js
 import { Inter } from "next/font/google";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
@@ -50,7 +49,7 @@ export default function Account() {
       const storage = getStorage();
       const imageRef = ref(
         storage,
-        `Images/${uid}/${generateUniqueFileName()}`
+        `Images/${generateUniqueFileName()}`
       );
       await uploadBytes(imageRef, selectedImageFile);
 
