@@ -1,77 +1,76 @@
-import { Inter } from "next/font/google";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../lib/firebase";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { getStorage, ref, uploadBytes } from "firebase/storage";
-import { collection, addDoc } from "firebase/firestore";
+import { Inter } from 'next/font/google'
+import { doc, getDoc, collection, addDoc } from 'firebase/firestore'
+import { db } from '../../lib/firebase'
+import { useRouter } from 'next/router'
+import { useEffect, useState, React } from 'react'
+import { getStorage, ref, uploadBytes } from 'firebase/storage'
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] })
 
-export default function Account() {
-  const router = useRouter();
-  const { uid } = router.query;
-  const [userData, setUserData] = useState(null);
-  const [productName, setProductName] = useState("");
-  const [productPrice, setProductPrice] = useState("");
-  const [selectedImageFile, setSelectedImageFile] = useState(null);
-  const [publishSuccessMsg, setPublishSuccessMsg] = useState("");
+export default function Account () {
+  const router = useRouter()
+  const { uid } = router.query
+  const [userData, setUserData] = useState(null)
+  const [productName, setProductName] = useState('')
+  const [productPrice, setProductPrice] = useState('')
+  const [selectedImageFile, setSelectedImageFile] = useState(null)
+  const [publishSuccessMsg, setPublishSuccessMsg] = useState('')
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         if (uid) {
-          const docRef = doc(db, "users", uid);
-          const docSnap = await getDoc(docRef);
+          const docRef = doc(db, 'users', uid)
+          const docSnap = await getDoc(docRef)
 
           if (docSnap.exists()) {
-            const fetchedUserData = docSnap.data();
-            setUserData(fetchedUserData);
-            console.log("Document data:", fetchedUserData);
+            const fetchedUserData = docSnap.data()
+            setUserData(fetchedUserData)
+            console.log('Document data:', fetchedUserData)
           } else {
-            console.log("Pas de data récupérées");
+            console.log('Pas de data récupérées')
           }
         }
       } catch (error) {
-        console.error("catch data de l'utilisateur récupérées:", error);
+        console.error("catch data de l'utilisateur récupérées:", error)
       }
-    };
+    }
 
-    fetchUserData();
-  }, [uid]);
+    fetchUserData()
+  }, [uid])
 
-  const userRole = userData?.role || "utilisateur";
+  const userRole = userData?.role || 'utilisateur'
 
   const handlePublishProduct = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
-      const storage = getStorage();
+      const storage = getStorage()
       const imageRef = ref(
         storage,
         `Images/${generateUniqueFileName()}`
-      );
-      await uploadBytes(imageRef, selectedImageFile);
+      )
+      await uploadBytes(imageRef, selectedImageFile)
 
       const productDetails = {
         name: productName,
         price: parseFloat(productPrice),
-        imageUrl: imageRef.fullPath,
-      };
+        imageUrl: imageRef.fullPath
+      }
 
-      const productsCollectionRef = collection(db, "products");
-      await addDoc(productsCollectionRef, productDetails);
+      const productsCollectionRef = collection(db, 'products')
+      await addDoc(productsCollectionRef, productDetails)
 
-      console.log("Produit publié avec succès !");
-      setPublishSuccessMsg(`Le produit "${productName}" a bien été ajouté`);
+      console.log('Produit publié avec succès !')
+      setPublishSuccessMsg(`Le produit "${productName}" a bien été ajouté`)
     } catch (error) {
-      console.error("Erreur lors de la publication du produit :", error);
+      console.error('Erreur lors de la publication du produit :', error)
     }
-  };
+  }
 
   const generateUniqueFileName = () => {
-    return `${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-  };
+    return `${Date.now()}_${Math.floor(Math.random() * 1000)}`
+  }
 
   return (
     <main
@@ -79,16 +78,16 @@ export default function Account() {
     >
       <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
         <div className="group rounded-lg border border-transparent px-5 py-4 transition-colors bg-neutral-100">
-          <h2 className={`mb-3 text-2xl font-semibold`}>Bienvenue</h2>
-          <p className={`m-0 max-w-[30ch] text-sm`}>
+          <h2 className={'mb-3 text-2xl font-semibold'}>Bienvenue</h2>
+          <p className={'m-0 max-w-[30ch] text-sm'}>
             {`Bienvenue, vous êtes ${
-              userRole === "vendeur" ? "vendeur" : "client"
+              userRole === 'vendeur' ? 'vendeur' : 'client'
             }`}
           </p>
         </div>
       </div>
 
-      {userRole === "vendeur" && (
+      {userRole === 'vendeur' && (
         <form
           onSubmit={handlePublishProduct}
           className="max-w-md mx-auto bg-gray-100 p-8 rounded-md shadow-lg"
@@ -138,5 +137,5 @@ export default function Account() {
         </form>
       )}
     </main>
-  );
+  )
 }

@@ -1,17 +1,14 @@
-import { useState } from "react"
-import { useRouter } from "next/router"
-import { Inter } from "next/font/google"
-import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from "./lib/firebase"
-import Link from "next/link"
+import { useState, React } from 'react'
+import { useRouter } from 'next/router'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from './lib/firebase'
+import Link from 'next/link'
 
-import "tailwindcss/tailwind.css"
+import 'tailwindcss/tailwind.css'
 
-const inter = Inter({ subsets: ["latin"] })
-
-export default function SignIn() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+export default function SignIn () {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const router = useRouter()
 
@@ -21,12 +18,12 @@ export default function SignIn() {
     try {
       console.log(auth, email, password)
       signInWithEmailAndPassword(auth, email, password).then((response) => {
-        router.push(`/`)
+        router.push('/')
         console.log(response.user.uid)
       })
     } catch (error) {
       console.error(error.code, error.message)
-      setError("Mail ou mot de passe incorrect.")
+      setError('Mail ou mot de passe incorrect.')
     }
   }
 
@@ -68,9 +65,9 @@ export default function SignIn() {
         </button>
 
         <p className="text-gray-600 text-sm mt-2">
-          Pas de compte ?{" "}
+          Pas de compte ?{' '}
           <Link legacyBehavior href="/register">
-            <a style={{ textDecoration: "underline" }}>Créer un compte</a>
+            <a style={{ textDecoration: 'underline' }}>Créer un compte</a>
           </Link>
         </p>
       </form>

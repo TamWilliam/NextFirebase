@@ -1,6 +1,6 @@
-import React from "react"
-import Link from "next/link"
-import { auth } from "../pages/lib/firebase"
+import React from 'react'
+import Link from 'next/link'
+import { auth } from '../pages/lib/firebase'
 
 const Navbar = () => {
   const handleSignOut = async () => {
@@ -8,7 +8,7 @@ const Navbar = () => {
       await auth.signOut()
       window.location.reload()
     } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error)
+      console.error('Erreur lors de la déconnexion :', error)
     }
   }
 
@@ -22,7 +22,8 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            {auth.currentUser ? (
+            {auth.currentUser
+              ? (
               <div className="flex items-center">
                 <Link href="/profile">
                   <span className="text-white mr-4">
@@ -33,7 +34,8 @@ const Navbar = () => {
                   Déconnexion
                 </button>
               </div>
-            ) : (
+                )
+              : (
               <>
                 <Link href="/login">
                   <span className="text-white">Connexion</span>
@@ -42,7 +44,7 @@ const Navbar = () => {
                   <span className="text-white ml-4">Inscription</span>
                 </Link>
               </>
-            )}
+                )}
           </li>
         </ul>
       </div>

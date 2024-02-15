@@ -1,15 +1,14 @@
-import { useState } from "react"
-import { useRouter } from "next/router"
-import { Inter } from "next/font/google"
-import { createUserWithEmailAndPassword } from "firebase/auth"
-import { db, auth } from "./lib/firebase"
-import { setDoc, doc } from "firebase/firestore"
+import { useState, React } from 'react'
+import { useRouter } from 'next/router'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { db, auth } from './lib/firebase'
+import { setDoc, doc } from 'firebase/firestore'
 
-import "tailwindcss/tailwind.css"
+import 'tailwindcss/tailwind.css'
 
-export default function Register() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+export default function Register () {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const router = useRouter()
 
   const handleSignUp = async (e) => {
@@ -25,12 +24,12 @@ export default function Register() {
       const user = userCredential.user
 
       // ajout de l'utilisateur à firestore avec le role (par défaut user)
-      await setDoc(doc(db, "users", user.uid), {
+      await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
-        role: "user",
+        role: 'user'
       })
 
-      router.push("/login")
+      router.push('/login')
     } catch (error) {
       console.error(error.code, error.message)
     }
@@ -68,7 +67,7 @@ export default function Register() {
           type="submit"
           className="text-center text-4xl p-3 text-amber-100 rounded-md w-full bg-green-400 hover:bg-blue-500"
         >
-          S'enregistrer
+          Inscription
         </button>
       </form>
     </div>
