@@ -1,5 +1,3 @@
-// components/Footer.js
-
 const Footer = () => {
   return (
     <footer className="bg-gray-800 p-4 absolute bottom-0 w-full">
