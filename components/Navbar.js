@@ -6,7 +6,7 @@ const Navbar = () => {
   const handleSignOut = async () => {
     try {
       await auth.signOut()
-      window.location.reload() // Rechargez la page actuelle
+      window.location.reload()
     } catch (error) {
       console.error("Erreur lors de la déconnexion :", error)
     }
@@ -22,15 +22,17 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/profile">
-              <span className="text-white">Profil</span>
-            </Link>
-          </li>
-          <li>
             {auth.currentUser ? (
-              <button className="text-white" onClick={handleSignOut}>
-                Déconnexion
-              </button>
+              <div className="flex items-center">
+                <Link href="/profile">
+                  <span className="text-white mr-4">
+                    {auth.currentUser.email}
+                  </span>
+                </Link>
+                <button className="text-white" onClick={handleSignOut}>
+                  Déconnexion
+                </button>
+              </div>
             ) : (
               <>
                 <Link href="/login">
