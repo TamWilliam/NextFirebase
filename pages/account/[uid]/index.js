@@ -1,7 +1,7 @@
 // pages/account.js
 import { Inter } from "next/font/google";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../../firebase/firebase";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"; // Ajout de useState
 

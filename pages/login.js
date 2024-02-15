@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { Inter } from "next/font/google";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth } from "../firebase/firebase";
 import Link from "next/link";
 
 import "tailwindcss/tailwind.css";
