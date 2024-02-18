@@ -1,16 +1,20 @@
-import React from "react"
-import Link from "next/link"
-import { auth } from "../pages/lib/firebase"
+import React, { useState } from "react";
+import Link from "next/link";
+import { auth } from "../pages/lib/firebase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
+  const [cartItemCount, setCartItemCount] = useState(0);
+
   const handleSignOut = async () => {
     try {
-      await auth.signOut()
-      window.location.reload()
+      await auth.signOut();
+      window.location.reload();
     } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error)
+      console.error("Erreur lors de la déconnexion :", error);
     }
-  }
+  };
 
   return (
     <nav className="bg-gray-800 p-4">
@@ -21,7 +25,13 @@ const Navbar = () => {
               <span className="text-white font-bold">Accueil</span>
             </Link>
           </li>
-          <li>
+          <li className="flex items-center">
+            <Link href="/cart" className="text-white mr-4">
+              <FontAwesomeIcon icon={faShoppingCart} />
+              {cartItemCount > 0 && (
+                <span className="ml-1 text-white">{cartItemCount}</span>
+              )}
+            </Link>
             {auth.currentUser ? (
               <div className="flex items-center">
                 <Link href="/profile">
@@ -47,7 +57,7 @@ const Navbar = () => {
         </ul>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
