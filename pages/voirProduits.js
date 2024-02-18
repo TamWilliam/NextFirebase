@@ -32,22 +32,16 @@ export default function VoirProduits() {
   }, []);
 
   const handleAddToCart = (produit) => {
-    // Copiez le panier actuel
     const newCart = [...panier];
-    // Vérifiez si le produit est déjà dans le panier
     const existingItemIndex = newCart.findIndex(
       (item) => item.id === produit.id
     );
     if (existingItemIndex !== -1) {
-      // Si le produit est déjà dans le panier, augmentez simplement la quantité
       newCart[existingItemIndex].quantity += 1;
     } else {
-      // Sinon, ajoutez le produit au panier
       newCart.push({ ...produit, quantity: 1 });
     }
-    // Mettez à jour le panier avec le nouveau panier
     setPanier(newCart);
-    // Affichez une notification de succès d'ajout au panier
     alert("Produit ajouté au panier !");
   };
 
