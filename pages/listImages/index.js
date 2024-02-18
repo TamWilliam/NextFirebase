@@ -1,26 +1,26 @@
-import { useState, useEffect } from "react";
-import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
+import { useState, useEffect, React } from 'react'
+import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage'
 
 export default function DisplayImages() {
-  const [imageUrls, setImageUrls] = useState([]);
+  const [imageUrls, setImageUrls] = useState([])
 
   useEffect(() => {
     const fetchImages = async () => {
-      const storage = getStorage();
-      const imagesListRef = ref(storage, "Images/");
-      const imageRefs = await listAll(imagesListRef);
+      const storage = getStorage()
+      const imagesListRef = ref(storage, 'Images/')
+      const imageRefs = await listAll(imagesListRef)
 
       const urls = await Promise.all(
         imageRefs.items.map((itemRef) => {
-          return getDownloadURL(itemRef);
+          return getDownloadURL(itemRef)
         })
-      );
+      )
 
-      setImageUrls(urls);
-    };
+      setImageUrls(urls)
+    }
 
-    fetchImages();
-  }, []);
+    fetchImages()
+  }, [])
 
   return (
     <div>
@@ -31,10 +31,10 @@ export default function DisplayImages() {
             key={index}
             src={url}
             alt="Image from Firebase"
-            style={{ width: "100px", height: "100px" }}
+            style={{ width: '100px', height: '100px' }}
           />
         ))}
       </div>
     </div>
-  );
+  )
 }

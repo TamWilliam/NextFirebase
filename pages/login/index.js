@@ -1,36 +1,36 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
-import Link from "next/link";
+import { useState, React } from 'react'
+import { useRouter } from 'next/router'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../../firebase/firebase'
+import Link from 'next/link'
 
-import "tailwindcss/tailwind.css";
+import 'tailwindcss/tailwind.css'
 
 export default function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const router = useRouter();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(null)
+  const router = useRouter()
 
   const handleSignIn = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
     signInWithEmailAndPassword(auth, email, password)
       .then((response) => {
-        router.push(`/`);
+        router.push(`/`)
       })
       .catch((error) => {
         if (
-          error.code === "auth/wrong-password" ||
-          error.code === "auth/user-not-found" ||
-          error.code === "auth/invalid-email"
+          error.code === 'auth/wrong-password' ||
+          error.code === 'auth/user-not-found' ||
+          error.code === 'auth/invalid-email'
         ) {
-          setError("Utilisateur ou mot de passe incorrect.");
+          setError('Utilisateur ou mot de passe incorrect.')
         } else {
-          setError("Utilisateur ou mot de passe incorrect.");
+          setError('Utilisateur ou mot de passe incorrect.')
         }
-      });
-  };
+      })
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -74,5 +74,5 @@ export default function SignIn() {
         </p>
       </form>
     </div>
-  );
+  )
 }

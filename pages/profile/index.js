@@ -1,8 +1,6 @@
-import { Inter } from "next/font/google";
-import Layout from "../../components/Layout";
-import Link from "next/link";
-
-const inter = Inter({ subsets: ["latin"] });
+import React from 'react'
+import Layout from '../../components/Layout'
+import Link from 'next/link'
 
 export default function Profile() {
   return (
@@ -22,5 +20,5 @@ export default function Profile() {
         </li>
       </ul>
     </Layout>
-  );
+  )
 }

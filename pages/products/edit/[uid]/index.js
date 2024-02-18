@@ -1,97 +1,95 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { useEffect, useState, React } from 'react'
+import { useRouter } from 'next/router'
+import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import {
   getStorage,
   ref as storageRef,
   uploadBytes,
-  getDownloadURL,
-} from "firebase/storage";
-import { auth, db } from "../../../../firebase/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-import Layout from "../../../../components/Layout";
-import Link from "next/link";
+  getDownloadURL
+} from 'firebase/storage'
+import { auth, db } from '../../../../firebase/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
+import Layout from '../../../../components/Layout'
+import Link from 'next/link'
 
 export default function EditProductPage() {
-  const [product, setProduct] = useState({ name: "", price: "", imageUrl: "" });
-  const [newImage, setNewImage] = useState(null);
-  const router = useRouter();
-  const { uid } = router.query;
+  const [product, setProduct] = useState({ name: '', price: '', imageUrl: '' })
+  const [newImage, setNewImage] = useState(null)
+  const router = useRouter()
+  const { uid } = router.query
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const userDocRef = doc(db, "users", user.uid);
+        const userDocRef = doc(db, 'users', user.uid)
         getDoc(userDocRef).then((docSnap) => {
-          if (docSnap.exists() && docSnap.data().role === "vendeur") {
-            fetchProduct();
+          if (docSnap.exists() && docSnap.data().role === 'vendeur') {
+            fetchProduct()
           } else {
-            router.push("/");
+            router.push('/')
           }
-        });
+        })
       } else {
-        router.push("/login");
+        router.push('/login')
       }
-    });
-  }, [router, uid]);
+    })
+  }, [router, uid])
 
   const fetchProduct = async () => {
-    if (!uid) return;
-    const docRef = doc(db, "products", uid);
-    const docSnap = await getDoc(docRef);
+    if (!uid) return
+    const docRef = doc(db, 'products', uid)
+    const docSnap = await getDoc(docRef)
 
     if (docSnap.exists()) {
-      const data = docSnap.data();
-      let imageUrl;
+      const data = docSnap.data()
+      let imageUrl
       try {
-        imageUrl = await getDownloadURL(
-          storageRef(getStorage(), data.imageUrl)
-        );
+        imageUrl = await getDownloadURL(storageRef(getStorage(), data.imageUrl))
       } catch (error) {
-        console.error("Error fetching image URL:", error);
-        imageUrl = "/Images/noImage/noImage.jpg";
+        console.error('Error fetching image URL:', error)
+        imageUrl = '/Images/noImage/noImage.jpg'
       }
-      setProduct({ ...data, imageUrl });
+      setProduct({ ...data, imageUrl })
     } else {
-      console.log("No such document!");
+      console.log('No such document!')
     }
-  };
+  }
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProduct((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setProduct((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
-      setNewImage(e.target.files[0]);
+      setNewImage(e.target.files[0])
     }
-  };
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    let imageUrl = product.imageUrl;
+    let imageUrl = product.imageUrl
 
     if (newImage) {
-      const storage = getStorage();
+      const storage = getStorage()
       const imageFileRef = storageRef(
         storage,
         `products/${newImage.name}_${Date.now()}`
-      );
-      await uploadBytes(imageFileRef, newImage);
-      imageUrl = await getDownloadURL(imageFileRef);
+      )
+      await uploadBytes(imageFileRef, newImage)
+      imageUrl = await getDownloadURL(imageFileRef)
     }
 
-    const productRef = doc(db, "products", uid);
-    await updateDoc(productRef, { ...product, imageUrl });
+    const productRef = doc(db, 'products', uid)
+    await updateDoc(productRef, { ...product, imageUrl })
 
-    alert("Produit mis à jour avec succès !");
-    router.push("/products");
-  };
+    alert('Produit mis à jour avec succès !')
+    router.push('/products')
+  }
 
   if (!product) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
@@ -106,7 +104,7 @@ export default function EditProductPage() {
               type="text"
               id="name"
               name="name"
-              value={product.name || ""}
+              value={product.name || ''}
               onChange={handleChange}
               className="text-black border-gray-300 bg-white p-2"
             />
@@ -117,7 +115,7 @@ export default function EditProductPage() {
               type="number"
               id="price"
               name="price"
-              value={product.price || ""}
+              value={product.price || ''}
               onChange={handleChange}
               className="text-black border-gray-300 bg-white p-2"
             />
@@ -143,5 +141,5 @@ export default function EditProductPage() {
         </form>
       </div>
     </Layout>
-  );
+  )
 }

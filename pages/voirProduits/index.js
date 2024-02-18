@@ -1,56 +1,53 @@
-import { useState, useEffect, React } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { db } from "../../firebase/firebase";
-import Link from "next/link";
-import { Inter } from "next/font/google";
-import Layout from "../../components/Layout";
-
-const inter = Inter({ subsets: ["latin"] });
+import { useState, useEffect, React } from 'react'
+import { collection, getDocs } from 'firebase/firestore'
+import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+import { db } from '../../firebase/firebase'
+import Link from 'next/link'
+import Layout from '../../components/Layout'
 
 export default function VoirProduits({ produitsData }) {
-  const [produits, setProduits] = useState(produitsData || []);
-  const [panier, setPanier] = useState([]);
+  const [produits, setProduits] = useState(produitsData || [])
+  const [panier, setPanier] = useState([])
 
   useEffect(() => {
     if (!produitsData) {
       const fetchProduits = async () => {
-        const querySnapshot = await getDocs(collection(db, "products"));
+        const querySnapshot = await getDocs(collection(db, 'products'))
         const produitsData = await Promise.all(
           querySnapshot.docs.map(async (doc) => {
-            const data = doc.data();
-            let imageUrl = "";
-            console.log(data.imageUrl);
+            const data = doc.data()
+            let imageUrl = ''
+            console.log(data.imageUrl)
             try {
-              imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl));
-              console.log(imageUrl);
+              imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl))
+              console.log(imageUrl)
             } catch (error) {
-              console.error("Error fetching image URL:", error);
-              imageUrl = "Images/noImage/noImage.jpg";
+              console.error('Error fetching image URL:', error)
+              imageUrl = 'Images/noImage/noImage.jpg'
             }
-            return { id: doc.id, ...data, imageUrl };
+            return { id: doc.id, ...data, imageUrl }
           })
-        );
-        setProduits(produitsData);
-      };
+        )
+        setProduits(produitsData)
+      }
 
-      fetchProduits();
+      fetchProduits()
     }
-  }, [produitsData]);
+  }, [produitsData])
 
   const handleAddToCart = (produit) => {
-    const newCart = [...panier];
+    const newCart = [...panier]
     const existingItemIndex = newCart.findIndex(
       (item) => item.id === produit.id
-    );
+    )
     if (existingItemIndex !== -1) {
-      newCart[existingItemIndex].quantity += 1;
+      newCart[existingItemIndex].quantity += 1
     } else {
-      newCart.push({ ...produit, quantity: 1 });
+      newCart.push({ ...produit, quantity: 1 })
     }
-    setPanier(newCart);
-    alert("Produit ajouté au panier !");
-  };
+    setPanier(newCart)
+    alert('Produit ajouté au panier !')
+  }
 
   return (
     <Layout>
@@ -86,14 +83,14 @@ export default function VoirProduits({ produitsData }) {
         </div>
       </div>
     </Layout>
-  );
+  )
 }
 
 export async function getServerSideProps() {
-  const querySnapshot = await getDocs(collection(db, "products"));
+  const querySnapshot = await getDocs(collection(db, 'products'))
   const produitsData = querySnapshot.docs.map((doc) => ({
     id: doc.id,
-    ...doc.data(),
-  }));
-  return { props: { produitsData } };
+    ...doc.data()
+  }))
+  return { props: { produitsData } }
 }

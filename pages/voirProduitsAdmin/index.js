@@ -1,34 +1,34 @@
-import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { db } from "../../firebase/firebase";
-import Link from "next/link";
+import { useState, useEffect, React } from 'react'
+import { collection, getDocs } from 'firebase/firestore'
+import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+import { db } from '../../firebase/firebase'
+import Link from 'next/link'
 
 export default function VoirProduitsAdmin() {
-  const [produits, setProduits] = useState([]);
+  const [produits, setProduits] = useState([])
 
   useEffect(() => {
     const fetchProduits = async () => {
-      const querySnapshot = await getDocs(collection(db, "products"));
+      const querySnapshot = await getDocs(collection(db, 'products'))
       const produitsData = await Promise.all(
         querySnapshot.docs.map(async (doc) => {
-          const data = doc.data();
-          let imageUrl = "";
-          console.log(data.imageUrl);
+          const data = doc.data()
+          let imageUrl = ''
+          console.log(data.imageUrl)
           try {
-            imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl));
+            imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl))
           } catch (error) {
-            console.error("Error fetching image URL:", error);
-            imageUrl = "Images/Products/Pierre/background.jpg";
+            console.error('Error fetching image URL:', error)
+            imageUrl = 'Images/Products/Pierre/background.jpg'
           }
-          return { id: doc.id, ...data, imageUrl };
+          return { id: doc.id, ...data, imageUrl }
         })
-      );
-      setProduits(produitsData);
-    };
+      )
+      setProduits(produitsData)
+    }
 
-    fetchProduits();
-  }, []);
+    fetchProduits()
+  }, [])
 
   return (
     <div className="container mx-auto px-4 py-8 bg-white">
@@ -56,5 +56,5 @@ export default function VoirProduitsAdmin() {
         ))}
       </div>
     </div>
-  );
+  )
 }

@@ -1,44 +1,44 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { doc, getDoc } from "firebase/firestore";
-import { getDownloadURL, ref, getStorage } from "firebase/storage";
-import { db } from "../../../firebase/firebase";
-import Layout from "../../../components/Layout";
+import { useEffect, useState, React } from 'react'
+import { useRouter } from 'next/router'
+import { doc, getDoc } from 'firebase/firestore'
+import { getDownloadURL, ref, getStorage } from 'firebase/storage'
+import { db } from '../../../firebase/firebase'
+import Layout from '../../../components/Layout'
 
 export default function ProductPage() {
-  const [product, setProduct] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
-  const router = useRouter();
-  const { uid } = router.query;
+  const [product, setProduct] = useState(null)
+  const [imageUrl, setImageUrl] = useState('')
+  const router = useRouter()
+  const { uid } = router.query
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!uid) return;
-      const docRef = doc(db, "products", uid);
-      const docSnap = await getDoc(docRef);
+      if (!uid) return
+      const docRef = doc(db, 'products', uid)
+      const docSnap = await getDoc(docRef)
 
       if (docSnap.exists()) {
-        setProduct(docSnap.data());
-        let url;
+        setProduct(docSnap.data())
+        let url
         try {
-          const imageRef = ref(getStorage(), docSnap.data().imageUrl);
-          url = await getDownloadURL(imageRef);
+          const imageRef = ref(getStorage(), docSnap.data().imageUrl)
+          url = await getDownloadURL(imageRef)
         } catch (error) {
-          console.error("Error fetching image URL:", error);
+          console.error('Error fetching image URL:', error)
           url = await getDownloadURL(
-            ref(getStorage(), "Images/noImage/noImage.jpg")
-          );
+            ref(getStorage(), 'Images/noImage/noImage.jpg')
+          )
         }
-        setImageUrl(url);
+        setImageUrl(url)
       } else {
-        console.log("No such document!");
+        console.log('No such document!')
       }
-    };
+    }
 
-    fetchProduct();
-  }, [uid]);
+    fetchProduct()
+  }, [uid])
 
-  if (!product) return <div>Loading...</div>;
+  if (!product) return <div>Loading...</div>
 
   return (
     <Layout>
@@ -49,9 +49,9 @@ export default function ProductPage() {
         <img
           src={imageUrl}
           alt={product.name}
-          style={{ width: "300px", height: "auto" }}
+          style={{ width: '300px', height: 'auto' }}
         />
       </div>
     </Layout>
-  );
+  )
 }

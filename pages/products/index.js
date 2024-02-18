@@ -1,86 +1,80 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import {
-  collection,
-  getDocs,
-  deleteDoc,
-  doc,
-  getDoc,
-} from "firebase/firestore";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { db, auth } from "../../firebase/firebase";
-import Link from "next/link";
-import Layout from "../../components/Layout";
-import { onAuthStateChanged } from "firebase/auth";
+import { useState, useEffect, React } from 'react'
+import { useRouter } from 'next/router'
+import { collection, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore'
+import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+import { db, auth } from '../../firebase/firebase'
+import Link from 'next/link'
+import Layout from '../../components/Layout'
+import { onAuthStateChanged } from 'firebase/auth'
 
 export default function VoirProduitsAdmin() {
-  const [produits, setProduits] = useState([]);
-  const [userId, setUserId] = useState("");
-  const [userRole, setUserRole] = useState(null);
-  const router = useRouter();
+  const [produits, setProduits] = useState([])
+  const [userId, setUserId] = useState('')
+  const [userRole, setUserRole] = useState(null)
+  const router = useRouter()
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        router.push("/");
+        router.push('/')
       } else {
-        setUserId(user.uid);
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnap = await getDoc(userDocRef);
+        setUserId(user.uid)
+        const userDocRef = doc(db, 'users', user.uid)
+        const userDocSnap = await getDoc(userDocRef)
         if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-          setUserRole(userData.role);
-          if (userData.role === "vendeur") {
-            fetchProduits();
+          const userData = userDocSnap.data()
+          setUserRole(userData.role)
+          if (userData.role === 'vendeur') {
+            fetchProduits()
           } else {
-            router.push("/");
+            router.push('/')
           }
         } else {
-          console.log("No such document!");
-          router.push("/");
+          console.log('No such document!')
+          router.push('/')
         }
       }
-    });
+    })
 
-    return () => unsubscribe();
-  }, [router]);
+    return () => unsubscribe()
+  }, [router])
 
   const fetchProduits = async () => {
-    const querySnapshot = await getDocs(collection(db, "products"));
+    const querySnapshot = await getDocs(collection(db, 'products'))
     const produitsData = await Promise.all(
       querySnapshot.docs.map(async (doc) => {
-        const data = doc.data();
-        let imageUrl = "";
+        const data = doc.data()
+        let imageUrl = ''
         try {
-          const imageRef = ref(getStorage(), data.imageUrl);
-          imageUrl = await getDownloadURL(imageRef);
+          const imageRef = ref(getStorage(), data.imageUrl)
+          imageUrl = await getDownloadURL(imageRef)
         } catch (error) {
-          console.error("Error fetching image URL:", error);
+          console.error('Error fetching image URL:', error)
           imageUrl = await getDownloadURL(
-            ref(getStorage(), "Images/noImage/noImage.jpg")
-          );
+            ref(getStorage(), 'Images/noImage/noImage.jpg')
+          )
         }
-        return { id: doc.id, ...data, imageUrl };
+        return { id: doc.id, ...data, imageUrl }
       })
-    );
-    setProduits(produitsData);
-  };
+    )
+    setProduits(produitsData)
+  }
 
   const confirmDelete = async (productId) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
-      await deleteProduct(productId);
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+      await deleteProduct(productId)
     }
-  };
+  }
 
   const deleteProduct = async (productId) => {
     try {
-      await deleteDoc(doc(db, "products", productId));
-      alert("Produit supprimé avec succès !");
-      setProduits(produits.filter((produit) => produit.id !== productId));
+      await deleteDoc(doc(db, 'products', productId))
+      alert('Produit supprimé avec succès !')
+      setProduits(produits.filter((produit) => produit.id !== productId))
     } catch (error) {
-      console.error("Erreur lors de la suppression du produit :", error);
+      console.error('Erreur lors de la suppression du produit :', error)
     }
-  };
+  }
 
   return (
     <Layout>
@@ -89,7 +83,7 @@ export default function VoirProduitsAdmin() {
           Liste des Produits
         </h1>
         <Link href={`/account/${userId}`}>Ajouter</Link>
-        {userRole === "vendeur" && (
+        {userRole === 'vendeur' && (
           <div className="overflow-x-auto">
             <table className="table-auto w-full border-collapse">
               <thead>
@@ -132,5 +126,5 @@ export default function VoirProduitsAdmin() {
         )}
       </div>
     </Layout>
-  );
+  )
 }

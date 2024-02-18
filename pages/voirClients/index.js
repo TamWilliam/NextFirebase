@@ -1,28 +1,26 @@
-import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebase/firebase";
+import { useState, useEffect, React } from 'react'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from '../../firebase/firebase'
 
 export default function VoirClients() {
-  const [clients, setClients] = useState([]);
-  const router = useRouter();
+  const [clients, setClients] = useState([])
 
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        const clientsData = [];
+        const querySnapshot = await getDocs(collection(db, 'users'))
+        const clientsData = []
         querySnapshot.forEach((doc) => {
-          clientsData.push({ id: doc.id, ...doc.data() });
-        });
-        setClients(clientsData);
+          clientsData.push({ id: doc.id, ...doc.data() })
+        })
+        setClients(clientsData)
       } catch (error) {
-        console.error("Error fetching clients:", error);
+        console.error('Error fetching clients:', error)
       }
-    };
+    }
 
-    fetchClients();
-  }, []);
+    fetchClients()
+  }, [])
 
   return (
     <div>
@@ -35,5 +33,5 @@ export default function VoirClients() {
         ))}
       </ul>
     </div>
-  );
+  )
 }

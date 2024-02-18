@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import Link from "next/link";
-import { auth } from "../firebase/firebase";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from 'react'
+import Link from 'next/link'
+import { auth } from '../firebase/firebase'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
 
 const Navbar = () => {
-  const [cartItemCount] = useState(0);
+  const [cartItemCount] = useState(0)
 
   const handleSignOut = async () => {
     try {
-      await auth.signOut();
-      window.location.reload();
+      await auth.signOut()
+      window.location.reload()
     } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error);
+      console.error('Erreur lors de la déconnexion :', error)
     }
-  };
+  }
 
   return (
     <nav className="bg-gray-800 p-4">
@@ -57,7 +57,7 @@ const Navbar = () => {
         </ul>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navbar;
+export default Navbar

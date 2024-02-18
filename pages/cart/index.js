@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import { useState, React } from 'react'
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState([])
 
   const removeFromCart = (index) => {
-    const newCartItems = [...cartItems];
-    newCartItems.splice(index, 1);
-    setCartItems(newCartItems);
-  };
+    const newCartItems = [...cartItems]
+    newCartItems.splice(index, 1)
+    setCartItems(newCartItems)
+  }
 
   return (
     <div>
@@ -25,7 +25,7 @@ const Cart = () => {
         </ul>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Cart;
+export default Cart

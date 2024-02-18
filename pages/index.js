@@ -1,59 +1,59 @@
-import Layout from "../components/Layout";
-import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { db } from "../firebase/firebase";
-import Link from "next/link";
+import Layout from '../components/Layout'
+import { useState, useEffect, React } from 'react'
+import { collection, getDocs } from 'firebase/firestore'
+import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+import { db } from '../firebase/firebase'
+import Link from 'next/link'
 
 export default function VoirProduits() {
-  const [produits, setProduits] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [panier, setPanier] = useState([]);
+  const [produits, setProduits] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [panier, setPanier] = useState([])
 
   useEffect(() => {
     const fetchProduits = async () => {
-      const querySnapshot = await getDocs(collection(db, "products"));
+      const querySnapshot = await getDocs(collection(db, 'products'))
       const produitsData = await Promise.all(
         querySnapshot.docs.map(async (doc) => {
-          const data = doc.data();
-          let imageUrl = "";
-          console.log(data.imageUrl);
+          const data = doc.data()
+          let imageUrl = ''
+          console.log(data.imageUrl)
           try {
-            imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl));
-            console.log(imageUrl);
+            imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl))
+            console.log(imageUrl)
           } catch (error) {
-            console.error("Error fetching image URL:", error);
+            console.error('Error fetching image URL:', error)
             imageUrl = await getDownloadURL(
-              ref(getStorage(), "Images/noImage/noImage.jpg")
-            );
+              ref(getStorage(), 'Images/noImage/noImage.jpg')
+            )
           }
-          return { id: doc.id, ...data, imageUrl };
+          return { id: doc.id, ...data, imageUrl }
         })
-      );
-      setProduits(produitsData);
-      setLoading(false);
-    };
+      )
+      setProduits(produitsData)
+      setLoading(false)
+    }
 
-    fetchProduits();
-  }, []);
+    fetchProduits()
+  }, [])
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   const handleAddToCart = (produit) => {
-    const newCart = [...panier];
+    const newCart = [...panier]
     const existingItemIndex = newCart.findIndex(
       (item) => item.id === produit.id
-    );
+    )
     if (existingItemIndex !== -1) {
-      newCart[existingItemIndex].quantity += 1;
+      newCart[existingItemIndex].quantity += 1
     } else {
-      newCart.push({ ...produit, quantity: 1 });
+      newCart.push({ ...produit, quantity: 1 })
     }
-    setPanier(newCart);
-    alert("Produit ajouté au panier !");
-  };
+    setPanier(newCart)
+    alert('Produit ajouté au panier !')
+  }
 
   return (
     <Layout>
@@ -91,5 +91,5 @@ export default function VoirProduits() {
         </div>
       </div>
     </Layout>
-  );
+  )
 }

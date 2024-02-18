@@ -1,9 +1,10 @@
-import { useAuth } from "../firebase/firebase";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import React from 'react'
+import { useAuth } from '../firebase/firebase'
+import Navbar from './Navbar'
+import Footer from './Footer'
 
 const Layout = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useAuth()
 
   return (
     <div>
@@ -11,7 +12,7 @@ const Layout = ({ children }) => {
       <div className="container mx-auto">{children}</div>
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default Layout;
+export default Layout
