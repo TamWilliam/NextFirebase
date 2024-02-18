@@ -1,34 +1,36 @@
-import { useState } from "react"
-import { useRouter } from "next/router"
-import { Inter } from "next/font/google"
-import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from "./lib/firebase"
-import Link from "next/link"
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/firebase";
+import Link from "next/link";
 
-import "tailwindcss/tailwind.css"
-
-const inter = Inter({ subsets: ["latin"] })
+import "tailwindcss/tailwind.css";
 
 export default function SignIn() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState(null)
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const router = useRouter();
 
   const handleSignIn = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    try {
-      console.log(auth, email, password)
-      signInWithEmailAndPassword(auth, email, password).then((response) => {
-        router.push(`/`)
-        console.log(response.user.uid)
+    signInWithEmailAndPassword(auth, email, password)
+      .then((response) => {
+        router.push(`/`);
       })
-    } catch (error) {
-      console.error(error.code, error.message)
-      setError("Mail ou mot de passe incorrect.")
-    }
-  }
+      .catch((error) => {
+        if (
+          error.code === "auth/wrong-password" ||
+          error.code === "auth/user-not-found" ||
+          error.code === "auth/invalid-email"
+        ) {
+          setError("Utilisateur ou mot de passe incorrect.");
+        } else {
+          setError("Utilisateur ou mot de passe incorrect.");
+        }
+      });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -68,12 +70,9 @@ export default function SignIn() {
         </button>
 
         <p className="text-gray-600 text-sm mt-2">
-          Pas de compte ?{" "}
-          <Link legacyBehavior href="/register">
-            <a style={{ textDecoration: "underline" }}>Créer un compte</a>
-          </Link>
+          Pas de compte ? <Link href="/register">Créer un compte</Link>
         </p>
       </form>
     </div>
-  )
+  );
 }

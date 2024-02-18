@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { auth } from "../pages/lib/firebase";
+import { auth } from "../firebase/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
-  const [cartItemCount, setCartItemCount] = useState(0);
+  const [cartItemCount] = useState(0);
 
   const handleSignOut = async () => {
     try {

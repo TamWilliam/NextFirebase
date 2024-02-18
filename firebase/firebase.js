@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react"
-import { getApps, getApp, initializeApp } from "firebase/app"
+import { useEffect, useState } from "react";
+import { getApps, getApp, initializeApp } from "firebase/app";
 import {
   getAuth,
   onAuthStateChanged,
   browserLocalPersistence,
   setPersistence,
-} from "firebase/auth"
-import { getFirestore } from "firebase/firestore"
+} from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAnxVe_3H7Ypf0dJcQZO1kegQWv3KWTgQk",
@@ -16,33 +16,33 @@ const firebaseConfig = {
   messagingSenderId: "289054162281",
   appId: "1:289054162281:web:4d2e2d8666ba7e26e411f8",
   measurementId: "G-7F8LJFTQ42",
-}
+};
 
 //initialisation de l'application Firebase
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 //récupération de l'instance de l'authentification
-const auth = getAuth(app)
+const auth = getAuth(app);
 
 //configuration de la persistance de l'authentification
-setPersistence(auth, browserLocalPersistence)
+setPersistence(auth, browserLocalPersistence);
 
 //récupération de l'instance de Firestore
-const db = getFirestore(app)
+const db = getFirestore(app);
 
 //hook personnalisé pour gérer l'authentification de l'utilisateur
 const useAuth = () => {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user)
-    })
+      setUser(user);
+    });
 
-    return () => unsubscribe()
-  }, [])
+    return () => unsubscribe();
+  }, []);
 
-  return { user }
-}
+  return { user };
+};
 
-export { app, auth, db, useAuth }
+export { app, auth, db, useAuth };

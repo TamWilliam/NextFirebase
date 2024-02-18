@@ -1,40 +1,55 @@
-import { useState } from "react"
-import { useRouter } from "next/router"
-import { Inter } from "next/font/google"
-import { createUserWithEmailAndPassword } from "firebase/auth"
-import { db, auth } from "./lib/firebase"
-import { setDoc, doc } from "firebase/firestore"
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { db, auth } from "../../firebase/firebase";
+import { setDoc, doc } from "firebase/firestore";
 
-import "tailwindcss/tailwind.css"
+import "tailwindcss/tailwind.css";
 
 export default function Register() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSignUp = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      // création de l'utilisateur
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
-      )
-      const user = userCredential.user
+      );
+      const user = userCredential.user;
 
-      // ajout de l'utilisateur à firestore avec le role (par défaut user)
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         role: "user",
-      })
+      });
 
-      router.push("/login")
+      router.push("/login");
     } catch (error) {
-      console.error(error.code, error.message)
+      if (error.code) {
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            setError("Cette adresse email est déjà utilisée.");
+            break;
+          case "auth/invalid-email":
+          case "auth/weak-password":
+            setError(
+              "Adresse email ou mot de passe invalide. 6 caractères minimum"
+            );
+            break;
+          default:
+            setError("Une erreur s'est produite lors de l'inscription.");
+            break;
+        }
+      } else {
+        setError("Une erreur s'est produite lors de l'inscription.");
+      }
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -42,6 +57,8 @@ export default function Register() {
         onSubmit={handleSignUp}
         className="max-w-md p-4 bg-white shadow-md rounded-md"
       >
+        {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
+
         <label className="block mb-2 text-sm font-medium text-gray-600">
           Adresse mail :
           <input
@@ -72,5 +89,5 @@ export default function Register() {
         </button>
       </form>
     </div>
-  )
+  );
 }

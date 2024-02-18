@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "./lib/firebase";
+import { db } from "../../firebase/firebase";
 
 export default function VoirClients() {
   const [clients, setClients] = useState([]);
@@ -29,7 +29,9 @@ export default function VoirClients() {
       <h1>Liste des clients</h1>
       <ul>
         {clients.map((client) => (
-          <li key={client.id}>{client.email} {client.role}</li>
+          <li key={client.id}>
+            {client.email} {client.role}
+          </li>
         ))}
       </ul>
     </div>
