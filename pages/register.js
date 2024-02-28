@@ -11,8 +11,23 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  /* passage du mdp en type text pour l'expérience utilisateur */
+  const [showPassword, setShowPassword] = useState(false);
+
+  /* regex */
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
   const handleSignUp = async (e) => {
     e.preventDefault();
+
+    /* test du regex */
+    if (!passwordRegex.test(password)) {
+      alert(
+        "Le mot de passe doit contenir au moins : 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial."
+      );
+      return;
+    }
 
     try {
       // création de l'utilisateur
@@ -55,14 +70,27 @@ export default function Register() {
 
           <label className="block mb-2 text-sm font-medium text-gray-600">
             Mot de passe :
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 border rounded-md"
+                required
+              />
+            </div>
           </label>
+
+          <div className="flex items-center mb-4">
+            <input
+              type="checkbox"
+              onChange={() => setShowPassword(!showPassword)}
+              className="mr-2"
+            />
+            <span className="text-sm text-gray-500">
+              Afficher le mot de passe
+            </span>
+          </div>
 
           <button
             type="submit"
