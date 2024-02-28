@@ -18,6 +18,8 @@ export default function Register() {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
+  const [successMessage, setSuccessMessage] = useState("");
+
   const handleSignUp = async (e) => {
     e.preventDefault();
 
@@ -44,7 +46,14 @@ export default function Register() {
         role: "user",
       });
 
-      router.push("/login");
+      /* affichage d'un msg pour inscription réussite */
+      setSuccessMessage(
+        "Inscription réussie ! Vous allez être redirigé vers la page de connexion."
+      );
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
     } catch (error) {
       console.error(error.code, error.message);
     }
@@ -57,6 +66,11 @@ export default function Register() {
           onSubmit={handleSignUp}
           className="max-w-md p-4 bg-white shadow-md rounded-md"
         >
+          {successMessage && (
+            <div className="text-green-600 text-center mb-4 rounded-md">
+              {successMessage}
+            </div>
+          )}
           <label className="block mb-2 text-sm font-medium text-gray-600">
             Adresse mail :
             <input
