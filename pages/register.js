@@ -18,6 +18,7 @@ export default function Register() {
   const passwordRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
+  /* affichage d'un message à l'inscription */
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleSignUp = async (e) => {
@@ -55,7 +56,11 @@ export default function Register() {
         router.push("/login");
       }, 3000);
     } catch (error) {
-      console.error(error.code, error.message);
+      if (error.code === "auth/email-already-in-use") {
+        alert("Mail déjà existant. Veuillez en saisir un nouveau.");
+      } else {
+        console.error(error.code, error.message);
+      }
     }
   };
 
