@@ -39,21 +39,22 @@ export default function VoirProduits() {
       return
     }
 
-    const userCartRef = doc(db, 'carts', user.uid)
+    const userCartRef = doc(db, 'carts', user.uid) // Utilisez l'UID de l'utilisateur connecté
     const userCartDoc = await getDoc(userCartRef)
     const userCartData = userCartDoc.exists() ? userCartDoc.data() : {}
 
-    const updatedCart = {
-      ...userCartData,
-      [produit.id]: {
-        ...produit,
-        quantity: userCartData[produit.id]
-          ? userCartData[produit.id].quantity + 1
-          : 1
-      }
+    if (userCartData[produit.id]) {
+      // Le produit existe déjà, augmentez simplement la quantité.
+      const newQuantity = userCartData[produit.id].quantity + 1
+      await updateDoc(userCartRef, {
+        [`${produit.id}.quantity`]: newQuantity
+      })
+    } else {
+      // Le produit n'existe pas, ajoutez-le avec une quantité de 1.
+      await updateDoc(userCartRef, {
+        [produit.id]: { ...produit, quantity: 1 }
+      })
     }
-
-    await setDoc(userCartRef, updatedCart)
 
     alert('Produit ajouté au panier !')
   }
