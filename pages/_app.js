@@ -1,6 +1,6 @@
 import React from 'react'
 import '../styles/globals.css'
-import { AuthProvider } from '../context/AuthContext' // Ajustez le chemin selon votre structure de projet
+import { AuthProvider } from '../context/AuthContext'
 
 function MyApp({ Component, pageProps }) {
   return (
