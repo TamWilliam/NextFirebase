@@ -39,23 +39,26 @@ export default function VoirProduits() {
       alert('Veuillez vous connecter pour ajouter des articles au panier.');
       return;
     }
-
+  
     const userCartRef = doc(db, 'carts', user.uid); // Utilisez l'UID de l'utilisateur connecté
     const userCartDoc = await getDoc(userCartRef);
     const userCartData = userCartDoc.exists() ? userCartDoc.data() : {};
-
-    const updatedCart = {
-      ...userCartData,
-      [produit.id]: {
-        ...produit,
-        quantity: userCartData[produit.id] ? userCartData[produit.id].quantity + 1 : 1,
-      },
-    };
-
-    await setDoc(userCartRef, updatedCart); // Met à jour ou crée le document du panier avec le nouveau panier
-
+  
+    if (userCartData[produit.id]) {
+      // Le produit existe déjà, augmentez simplement la quantité.
+      const newQuantity = userCartData[produit.id].quantity + 1;
+      await updateDoc(userCartRef, {
+        [`${produit.id}.quantity`]: newQuantity
+      });
+    } else {
+      // Le produit n'existe pas, ajoutez-le avec une quantité de 1.
+      await updateDoc(userCartRef, {
+        [produit.id]: { ...produit, quantity: 1 }
+      });
+    }
+  
     alert('Produit ajouté au panier !');
-  };
+  };  
 
   if (loading) {
     return <div>Loading...</div>;
