@@ -1,6 +1,14 @@
 import { useState, useEffect, React } from 'react'
 import { useRouter } from 'next/router'
-import { collection, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore'
+import {
+  query,
+  where,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  getDoc
+} from 'firebase/firestore'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { db, auth } from '../../firebase/firebase'
 import Link from 'next/link'
@@ -18,14 +26,15 @@ export default function VoirProduitsAdmin() {
       if (!user) {
         router.push('/')
       } else {
-        setUserId(user.uid)
         const userDocRef = doc(db, 'users', user.uid)
         const userDocSnap = await getDoc(userDocRef)
         if (userDocSnap.exists()) {
           const userData = userDocSnap.data()
           setUserRole(userData.role)
+          setUserId(user.uid) // S'assurer que userId est mis à jour avant de continuer
           if (userData.role === 'vendeur') {
-            fetchProduits()
+            // Déplacer fetchProduits ici et s'assurer qu'il est appelé après la mise à jour de l'état
+            fetchProduits(user.uid)
           } else {
             router.push('/')
           }
@@ -39,8 +48,16 @@ export default function VoirProduitsAdmin() {
     return () => unsubscribe()
   }, [router])
 
-  const fetchProduits = async () => {
-    const querySnapshot = await getDocs(collection(db, 'products'))
+  // Modifiez fetchProduits pour accepter userId comme paramètre
+  const fetchProduits = async (userId) => {
+    if (!userId) {
+      console.log('ID utilisateur non défini')
+      return
+    }
+
+    const q = query(collection(db, 'products'), where('vendorId', '==', userId))
+
+    const querySnapshot = await getDocs(q)
     const produitsData = await Promise.all(
       querySnapshot.docs.map(async (doc) => {
         const data = doc.data()
@@ -50,9 +67,7 @@ export default function VoirProduitsAdmin() {
           imageUrl = await getDownloadURL(imageRef)
         } catch (error) {
           console.error('Error fetching image URL:', error)
-          imageUrl = await getDownloadURL(
-            ref(getStorage(), 'Images/noImage/noImage.jpg')
-          )
+          imageUrl = 'path/to/default/image.jpg' // Utilisez le chemin vers votre image par défaut
         }
         return { id: doc.id, ...data, imageUrl }
       })

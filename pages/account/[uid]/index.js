@@ -1,4 +1,4 @@
-import { useEffect, useState, React } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { doc, getDoc, collection, addDoc } from 'firebase/firestore'
@@ -23,7 +23,7 @@ export default function Account() {
         const docRef = doc(db, 'users', user.uid)
         getDoc(docRef).then((docSnap) => {
           if (docSnap.exists() && docSnap.data().role === 'vendeur') {
-            setUserData(docSnap.data())
+            setUserData(docSnap.data()) // Maintenant cela fonctionne correctement
           } else {
             router.push('/')
           }
@@ -66,7 +66,8 @@ export default function Account() {
       await addDoc(collection(db, 'products'), {
         name: productName,
         price,
-        imageUrl
+        imageUrl,
+        vendorId: auth.currentUser.uid // Ajout de l'identifiant du vendeur
       })
       setPublishSuccessMsg(`Le produit "${productName}" a bien été ajouté.`)
       setProductName('')
