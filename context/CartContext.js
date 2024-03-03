@@ -1,39 +1,37 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { db } from '../firebase/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { useAuth } from '../firebase/firebase'; // Importez votre hook d'authentification
-
-export const CartContext = createContext();
+import React, { createContext, useState, useEffect, useContext } from 'react'
+import { db, useAuth } from '../firebase/firebase'
+import { collection, query, where, getDocs } from 'firebase/firestore'
+export const CartContext = createContext()
 
 export const CartProvider = ({ children }) => {
-  const [cartItemCount, setCartItemCount] = useState(0);
-  const { user } = useAuth();
+  const [cartItemCount, setCartItemCount] = useState(0)
+  const { user } = useAuth()
 
   useEffect(() => {
     if (user) {
       const fetchCartItemCount = async () => {
-        const cartRef = collection(db, 'carts');
-        const q = query(cartRef, where('userId', '==', user.uid));
-        const querySnapshot = await getDocs(q);
-        let count = 0;
+        const cartRef = collection(db, 'carts')
+        const q = query(cartRef, where('userId', '==', user.uid))
+        const querySnapshot = await getDocs(q)
+        let count = 0
         querySnapshot.forEach((doc) => {
-          const cartItems = doc.data();
+          const cartItems = doc.data()
           Object.values(cartItems).forEach((item) => {
-            count += item.quantity;
-          });
-        });
-        setCartItemCount(count);
-      };
+            count += item.quantity
+          })
+        })
+        setCartItemCount(count)
+      }
 
-      fetchCartItemCount();
+      fetchCartItemCount()
     }
-  }, [user]);
+  }, [user])
 
   return (
     <CartContext.Provider value={{ cartItemCount }}>
       {children}
     </CartContext.Provider>
-  );
-};
+  )
+}
 
-export const useCart = () => useContext(CartContext);
+export const useCart = () => useContext(CartContext)

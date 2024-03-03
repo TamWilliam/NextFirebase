@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, React } from 'react'
 import { useRouter } from 'next/router'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { db, auth } from '../../firebase/firebase'
@@ -15,9 +15,12 @@ export default function Register() {
     e.preventDefault()
 
     // Validation du mot de passe
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     if (!passwordRegex.test(password)) {
-      setError('Le mot de passe doit contenir au moins 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial (@$!%*?&).')
+      setError(
+        'Le mot de passe doit contenir au moins 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial (@$!%*?&).'
+      )
       return
     }
 
@@ -93,7 +96,9 @@ export default function Register() {
           </label>
 
           <label className="block mb-2 text-sm font-medium text-gray-600">
-            Mot de passe (au moins 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial @$!%*?&):
+            Mot de passe (au moins 8 caractères avec au moins une lettre
+            minuscule, une lettre majuscule, un chiffre et un caractère spécial
+            @$!%*?&):
             <input
               type="password"
               value={password}

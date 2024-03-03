@@ -22,15 +22,15 @@ const Cart = () => {
         const items = [];
         for (const [productId, productDetails] of Object.entries(userCartData)) {
           if (productDetails && productDetails !== null) {
-            items.push({ id: productId, ...productDetails });
+            items.push({ id: productId, ...productDetails })
           }
         }
 
         setCartItems(items);
       } catch (error) {
-        console.error('Error fetching cart items:', error);
+        console.error('Error fetching cart items:', error)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     };
 
@@ -47,9 +47,9 @@ const Cart = () => {
       const updatedCartItems = cartItems.filter(item => item.id !== productId);
       setCartItems(updatedCartItems);
     } catch (error) {
-      console.error('Error removing item from cart:', error);
+      console.error('Error removing item from cart:', error)
     }
-  };
+  }
 
   const updateQuantity = async (productId, newQuantity) => {
     if (!currentUser) return;
@@ -120,7 +120,7 @@ const Cart = () => {
         )}
       </div>
     </Layout>
-  );
-};
+  )
+}
 
-export default Cart;
+export default Cart
