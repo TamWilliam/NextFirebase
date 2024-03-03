@@ -1,16 +1,39 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { auth } from '../firebase/firebase'
+import { auth, db } from '../firebase/firebase'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
+import { doc, onSnapshot } from 'firebase/firestore'
 
 const Navbar = () => {
-  const [cartItemCount] = useState(0)
+  const [cartItemCount, setCartItemCount] = useState(0)
+
+  useEffect(() => {
+    let unsubscribe = () => {}
+
+    if (auth.currentUser) {
+      const userCartRef = doc(db, 'carts', auth.currentUser.uid)
+
+      unsubscribe = onSnapshot(userCartRef, (doc) => {
+        const data = doc.data()
+        let count = 0
+        if (data) {
+          Object.values(data).forEach((item) => {
+            count += item.quantity
+          })
+        }
+        setCartItemCount(count)
+      })
+    } else {
+      setCartItemCount(0)
+    }
+
+    return () => unsubscribe()
+  }, [auth.currentUser])
 
   const handleSignOut = async () => {
     try {
       await auth.signOut()
-      window.location.reload()
     } catch (error) {
       console.error('Erreur lors de la déconnexion :', error)
     }

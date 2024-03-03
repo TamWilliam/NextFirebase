@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import Link from 'next/link'
-import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore'
+import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { db, useAuth } from '../firebase/firebase'
 
@@ -43,17 +43,16 @@ export default function VoirProduits() {
     const userCartDoc = await getDoc(userCartRef)
     const userCartData = userCartDoc.exists() ? userCartDoc.data() : {}
 
-    const updatedCart = {
-      ...userCartData,
-      [produit.id]: {
-        ...produit,
-        quantity: userCartData[produit.id]
-          ? userCartData[produit.id].quantity + 1
-          : 1
-      }
+    if (userCartData[produit.id]) {
+      const newQuantity = userCartData[produit.id].quantity + 1
+      await updateDoc(userCartRef, {
+        [`${produit.id}.quantity`]: newQuantity
+      })
+    } else {
+      await updateDoc(userCartRef, {
+        [produit.id]: { ...produit, quantity: 1 }
+      })
     }
-
-    await setDoc(userCartRef, updatedCart)
 
     alert('Produit ajouté au panier !')
   }
