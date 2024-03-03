@@ -7,9 +7,12 @@ const Layout = ({ children }) => {
   const { user } = useAuth()
 
   return (
-    <div>
+    // Utilisez flex et min-h-screen pour s'assurer que le footer reste en bas
+    <div className="flex flex-col min-h-screen">
       <Navbar user={user} />
-      <div className="container mx-auto">{children}</div>
+      <div className="flex-grow">
+        <div className="container mx-auto">{children}</div>
+      </div>
       <Footer />
     </div>
   )

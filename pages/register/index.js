@@ -41,7 +41,7 @@ export default function Register() {
         role: 'user'
       })
 
-      router.push('/login')
+      router.push('/')
     } catch (error) {
       if (error.code) {
         switch (error.code) {

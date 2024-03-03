@@ -9,7 +9,7 @@ export default function Profile() {
 
       <ul className="list-disc">
         <li>
-          <Link href="/voirProduits" className="text-blue-500 hover:underline">
+          <Link href="/" className="text-blue-500 hover:underline">
             Voir les produits
           </Link>
         </li>
