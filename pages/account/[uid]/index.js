@@ -1,82 +1,83 @@
-import { useEffect, useState, React } from 'react'
-import { useRouter } from 'next/router'
-import { onAuthStateChanged } from 'firebase/auth'
-import { doc, getDoc, collection, addDoc } from 'firebase/firestore'
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { db, auth } from '../../../firebase/firebase'
-import Link from 'next/link'
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db, auth } from '../../../firebase/firebase';
+import Link from 'next/link';
 
 export default function Account() {
-  const router = useRouter()
-  const [setUserData] = useState(null)
-  const [productName, setProductName] = useState('')
-  const [productPrice, setProductPrice] = useState('')
-  const [selectedImageFile, setSelectedImageFile] = useState(null)
-  const [publishSuccessMsg, setPublishSuccessMsg] = useState('')
-  const [publishError, setPublishError] = useState('')
+  const router = useRouter();
+  const [userData, setUserData] = useState(null); // Correction ici
+  const [productName, setProductName] = useState('');
+  const [productPrice, setProductPrice] = useState('');
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [publishSuccessMsg, setPublishSuccessMsg] = useState('');
+  const [publishError, setPublishError] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        router.push('/login')
+        router.push('/login');
       } else {
-        const docRef = doc(db, 'users', user.uid)
+        const docRef = doc(db, 'users', user.uid);
         getDoc(docRef).then((docSnap) => {
           if (docSnap.exists() && docSnap.data().role === 'vendeur') {
-            setUserData(docSnap.data())
+            setUserData(docSnap.data()); // Maintenant cela fonctionne correctement
           } else {
-            router.push('/')
+            router.push('/');
           }
-        })
+        });
       }
-    })
+    });
 
-    return () => unsubscribe()
-  }, [router])
+    return () => unsubscribe();
+  }, [router]);
 
   const handlePublishProduct = async (e) => {
-    e.preventDefault()
-    setPublishSuccessMsg('')
-    setPublishError('')
-
+    e.preventDefault();
+    setPublishSuccessMsg('');
+    setPublishError('');
+  
     if (!productName.trim() || !productPrice) {
-      setPublishError('Informations manquantes')
-      return
+      setPublishError('Informations manquantes');
+      return;
     }
-
-    const price = parseFloat(productPrice)
+  
+    const price = parseFloat(productPrice);
     if (!Number.isInteger(price)) {
-      setPublishError('Bien essayé mais non, il faut un int pour le prix.')
-      return
+      setPublishError('Bien essayé mais non, il faut un int pour le prix.');
+      return;
     }
-
-    let imageUrl = '/Images/noImage/noImage'
+  
+    let imageUrl = '/Images/noImage/noImage';
     if (selectedImageFile) {
       try {
-        const storage = getStorage()
-        const storageRef = ref(storage, `Images/${generateUniqueFileName()}`)
-        await uploadBytes(storageRef, selectedImageFile)
-        imageUrl = await getDownloadURL(storageRef)
+        const storage = getStorage();
+        const storageRef = ref(storage, `Images/${generateUniqueFileName()}`);
+        await uploadBytes(storageRef, selectedImageFile);
+        imageUrl = await getDownloadURL(storageRef);
       } catch (error) {
-        console.error("Erreur lors de l'upload de l'image :", error)
+        console.error("Erreur lors de l'upload de l'image :", error);
       }
     }
-
+  
     try {
       await addDoc(collection(db, 'products'), {
         name: productName,
         price,
-        imageUrl
-      })
-      setPublishSuccessMsg(`Le produit "${productName}" a bien été ajouté.`)
-      setProductName('')
-      setProductPrice('')
-      setSelectedImageFile(null)
+        imageUrl,
+        vendorId: auth.currentUser.uid // Ajout de l'identifiant du vendeur
+      });
+      setPublishSuccessMsg(`Le produit "${productName}" a bien été ajouté.`);
+      setProductName('');
+      setProductPrice('');
+      setSelectedImageFile(null);
     } catch (error) {
-      console.error('Erreur lors de la publication du produit :', error)
-      setPublishError('Erreur lors de la publication du produit.')
+      console.error('Erreur lors de la publication du produit :', error);
+      setPublishError('Erreur lors de la publication du produit.');
     }
-  }
+  };
 
   const handleChange = (setter) => (e) => {
     setter(e.target.value)
