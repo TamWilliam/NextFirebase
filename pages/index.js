@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import Link from 'next/link'
-import { collection, getDocs, doc, getDoc, setDoc } from 'firebase/firestore'
+import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { db, useAuth } from '../firebase/firebase'
 
@@ -39,18 +39,16 @@ export default function VoirProduits() {
       return
     }
 
-    const userCartRef = doc(db, 'carts', user.uid) // Utilisez l'UID de l'utilisateur connecté
+    const userCartRef = doc(db, 'carts', user.uid)
     const userCartDoc = await getDoc(userCartRef)
     const userCartData = userCartDoc.exists() ? userCartDoc.data() : {}
 
     if (userCartData[produit.id]) {
-      // Le produit existe déjà, augmentez simplement la quantité.
       const newQuantity = userCartData[produit.id].quantity + 1
       await updateDoc(userCartRef, {
         [`${produit.id}.quantity`]: newQuantity
       })
     } else {
-      // Le produit n'existe pas, ajoutez-le avec une quantité de 1.
       await updateDoc(userCartRef, {
         [produit.id]: { ...produit, quantity: 1 }
       })
