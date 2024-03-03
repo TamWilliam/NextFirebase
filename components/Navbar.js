@@ -9,38 +9,35 @@ const Navbar = () => {
   const [cartItemCount, setCartItemCount] = useState(0)
 
   useEffect(() => {
-    let unsubscribe = () => {};
+    let unsubscribe = () => {}
 
     if (auth.currentUser) {
       const userCartRef = doc(db, 'carts', auth.currentUser.uid)
 
-      // Écoutez les changements en temps réel
       unsubscribe = onSnapshot(userCartRef, (doc) => {
-        const data = doc.data();
-        let count = 0;
+        const data = doc.data()
+        let count = 0
         if (data) {
-          Object.values(data).forEach(item => {
+          Object.values(data).forEach((item) => {
             count += item.quantity
-          });
+          })
         }
         setCartItemCount(count)
-      });
+      })
     } else {
-      setCartItemCount(0) // Réinitialiser si aucun utilisateur n'est connecté
+      setCartItemCount(0)
     }
 
-    // Cleanup function pour se désinscrire de l'écoute lors du démontage du composant
     return () => unsubscribe()
-  }, [auth.currentUser]) // Dépendance sur l'utilisateur actuel pour re-s'abonner lors de changements d'utilisateur
+  }, [auth.currentUser])
 
   const handleSignOut = async () => {
     try {
       await auth.signOut()
-      // Pas besoin de recharger la page
     } catch (error) {
-      console.error('Erreur lors de la déconnexion :', error);
+      console.error('Erreur lors de la déconnexion :', error)
     }
-  };
+  }
 
   return (
     <nav className="bg-gray-800 p-4">
