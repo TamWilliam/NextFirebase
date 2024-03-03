@@ -1,6 +1,14 @@
 import { useState, useEffect, React } from 'react'
 import { useRouter } from 'next/router'
-import { query, where, collection, getDocs, deleteDoc, doc, getDoc } from 'firebase/firestore'
+import {
+  query,
+  where,
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  getDoc
+} from 'firebase/firestore'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { db, auth } from '../../firebase/firebase'
 import Link from 'next/link'
@@ -16,56 +24,56 @@ export default function VoirProduitsAdmin() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        router.push('/');
+        router.push('/')
       } else {
-        const userDocRef = doc(db, 'users', user.uid);
-        const userDocSnap = await getDoc(userDocRef);
+        const userDocRef = doc(db, 'users', user.uid)
+        const userDocSnap = await getDoc(userDocRef)
         if (userDocSnap.exists()) {
-          const userData = userDocSnap.data();
-          setUserRole(userData.role);
-          setUserId(user.uid); // S'assurer que userId est mis à jour avant de continuer
+          const userData = userDocSnap.data()
+          setUserRole(userData.role)
+          setUserId(user.uid) // S'assurer que userId est mis à jour avant de continuer
           if (userData.role === 'vendeur') {
             // Déplacer fetchProduits ici et s'assurer qu'il est appelé après la mise à jour de l'état
-            fetchProduits(user.uid);
+            fetchProduits(user.uid)
           } else {
-            router.push('/');
+            router.push('/')
           }
         } else {
-          console.log('No such document!');
-          router.push('/');
+          console.log('No such document!')
+          router.push('/')
         }
       }
-    });
-  
-    return () => unsubscribe();
-  }, [router]);
-  
+    })
+
+    return () => unsubscribe()
+  }, [router])
+
   // Modifiez fetchProduits pour accepter userId comme paramètre
   const fetchProduits = async (userId) => {
     if (!userId) {
-      console.log('ID utilisateur non défini');
-      return;
+      console.log('ID utilisateur non défini')
+      return
     }
-  
-    const q = query(collection(db, 'products'), where("vendorId", "==", userId));
-  
-    const querySnapshot = await getDocs(q);
+
+    const q = query(collection(db, 'products'), where('vendorId', '==', userId))
+
+    const querySnapshot = await getDocs(q)
     const produitsData = await Promise.all(
       querySnapshot.docs.map(async (doc) => {
-        const data = doc.data();
-        let imageUrl = '';
+        const data = doc.data()
+        let imageUrl = ''
         try {
-          const imageRef = ref(getStorage(), data.imageUrl);
-          imageUrl = await getDownloadURL(imageRef);
+          const imageRef = ref(getStorage(), data.imageUrl)
+          imageUrl = await getDownloadURL(imageRef)
         } catch (error) {
-          console.error('Error fetching image URL:', error);
-          imageUrl = 'path/to/default/image.jpg'; // Utilisez le chemin vers votre image par défaut
+          console.error('Error fetching image URL:', error)
+          imageUrl = 'path/to/default/image.jpg' // Utilisez le chemin vers votre image par défaut
         }
-        return { id: doc.id, ...data, imageUrl };
+        return { id: doc.id, ...data, imageUrl }
       })
-    );
-    setProduits(produitsData);
-  };
+    )
+    setProduits(produitsData)
+  }
 
   const confirmDelete = async (productId) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
