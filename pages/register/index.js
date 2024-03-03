@@ -1,51 +1,55 @@
-import React, { useState, useContext } from 'react';
-import { useRouter } from 'next/router';
-import { AuthContext } from '../../context/AuthContext'; 
-import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
-import Layout from '../../components/Layout';
+import React, { useState, useContext } from 'react'
+import { AuthContext } from '../../context/AuthContext'
+import {
+  reauthenticateWithCredential,
+  EmailAuthProvider,
+  updatePassword
+} from 'firebase/auth'
+import Layout from '../../components/Layout'
 
 export default function Profile() {
-  const { currentUser } = useContext(AuthContext); 
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [error, setError] = useState('');
-  const router = useRouter();
+  const { currentUser } = useContext(AuthContext)
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [error, setError] = useState('')
 
   const handlePasswordChange = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     // Validation du nouveau mot de passe
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     if (!passwordRegex.test(newPassword)) {
       setError(
         'Le mot de passe doit contenir au moins 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial (@$!%*?&).'
-      );
-      return;
+      )
+      return
     }
 
     // Réauthentification de l'utilisateur
     const credential = EmailAuthProvider.credential(
       currentUser.email,
       currentPassword
-    );
+    )
 
     try {
-      await reauthenticateWithCredential(currentUser, credential);
-      await updatePassword(currentUser, newPassword);
-      alert('Password updated successfully!');
-      setNewPassword('');
-      setCurrentPassword('');
+      await reauthenticateWithCredential(currentUser, credential)
+      await updatePassword(currentUser, newPassword)
+      alert('Password updated successfully!')
+      setNewPassword('')
+      setCurrentPassword('')
     } catch (error) {
-      setError('Failed to update password. Make sure your current password is correct.');
-      console.error('Error updating password:', error);
+      setError(
+        'Failed to update password. Make sure your current password is correct.'
+      )
+      console.error('Error updating password:', error)
     }
-  };
+  }
 
   const handleChange = (setter) => (e) => {
-    setter(e.target.value);
-    setError('');
-  };
+    setter(e.target.value)
+    setError('')
+  }
 
   return (
     <Layout>
@@ -54,7 +58,10 @@ export default function Profile() {
         <div className="max-w-md mx-auto bg-white rounded-md shadow-md p-6 mt-8">
           <form onSubmit={handlePasswordChange} className="space-y-6">
             <div>
-              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="currentPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Current Password
               </label>
               <input
@@ -67,7 +74,10 @@ export default function Profile() {
               />
             </div>
             <div>
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="newPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 New Password
               </label>
               <input
@@ -81,7 +91,10 @@ export default function Profile() {
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <div>
-              <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full"
+              >
                 Change Password
               </button>
             </div>
@@ -89,5 +102,5 @@ export default function Profile() {
         </div>
       </div>
     </Layout>
-  );
+  )
 }

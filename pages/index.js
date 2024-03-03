@@ -1,40 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
-import Link from 'next/link';
-import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore';
-import { getStorage, ref, getDownloadURL } from 'firebase/storage';
-import { db, useAuth } from '../firebase/firebase';
+import React, { useState, useEffect } from 'react'
+import Layout from '../components/Layout'
+import Link from 'next/link'
+import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { getStorage, ref, getDownloadURL } from 'firebase/storage'
+import { db, useAuth } from '../firebase/firebase'
 
 export default function VoirProduits() {
-  const [produits, setProduits] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const [produits, setProduits] = useState([])
+  const [loading, setLoading] = useState(true)
+  const { user } = useAuth()
   const defaultImage = 'Images/noImage/noImage.jpg'
 
   useEffect(() => {
     const fetchProduits = async () => {
-      const querySnapshot = await getDocs(collection(db, 'products'));
+      const querySnapshot = await getDocs(collection(db, 'products'))
       const produitsData = await Promise.all(
         querySnapshot.docs.map(async (doc) => {
-          const data = doc.data();
-          let imageUrl = defaultImage; // Utilisez l'image par défaut ici
+          const data = doc.data()
+          let imageUrl = defaultImage // Utilisez l'image par défaut ici
           if (data.imageUrl) {
             try {
-              imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl));
+              imageUrl = await getDownloadURL(ref(getStorage(), data.imageUrl))
             } catch (error) {
-              console.error("Error fetching image URL:", error);
+              console.error('Error fetching image URL:', error)
               // En cas d'erreur, imageUrl est déjà défini sur l'image par défaut
             }
           }
-          return { id: doc.id, ...data, imageUrl };
+          return { id: doc.id, ...data, imageUrl }
         })
-      );
-      setProduits(produitsData);
-      setLoading(false);
-    };
+      )
+      setProduits(produitsData)
+      setLoading(false)
+    }
 
-    fetchProduits();
-  }, []);
+    fetchProduits()
+  }, [])
 
   const handleAddToCart = async (produit) => {
     if (!user) {
