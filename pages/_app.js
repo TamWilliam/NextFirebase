@@ -1,11 +1,14 @@
 import React from 'react'
 import '../styles/globals.css'
-import { AuthProvider } from '../context/AuthContext' // Ajustez le chemin selon votre structure de projet
+import { AuthProvider } from '../context/AuthContext'
+import { CartProvider } from '../context/CartContext'
 
 function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <Component {...pageProps} />
+      <CartProvider>
+        <Component {...pageProps} />
+      </CartProvider>
     </AuthProvider>
   )
 }

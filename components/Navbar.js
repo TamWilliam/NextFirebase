@@ -1,20 +1,46 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { auth } from '../firebase/firebase'
+import { auth, db } from '../firebase/firebase'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
+import { doc, onSnapshot } from 'firebase/firestore'
 
 const Navbar = () => {
-  const [cartItemCount] = useState(0)
+  const [cartItemCount, setCartItemCount] = useState(0)
+
+  useEffect(() => {
+    let unsubscribe = () => {};
+
+    if (auth.currentUser) {
+      const userCartRef = doc(db, 'carts', auth.currentUser.uid)
+
+      // Écoutez les changements en temps réel
+      unsubscribe = onSnapshot(userCartRef, (doc) => {
+        const data = doc.data();
+        let count = 0;
+        if (data) {
+          Object.values(data).forEach(item => {
+            count += item.quantity
+          });
+        }
+        setCartItemCount(count)
+      });
+    } else {
+      setCartItemCount(0) // Réinitialiser si aucun utilisateur n'est connecté
+    }
+
+    // Cleanup function pour se désinscrire de l'écoute lors du démontage du composant
+    return () => unsubscribe()
+  }, [auth.currentUser]) // Dépendance sur l'utilisateur actuel pour re-s'abonner lors de changements d'utilisateur
 
   const handleSignOut = async () => {
     try {
       await auth.signOut()
-      window.location.reload()
+      // Pas besoin de recharger la page
     } catch (error) {
-      console.error('Erreur lors de la déconnexion :', error)
+      console.error('Erreur lors de la déconnexion :', error);
     }
-  }
+  };
 
   return (
     <nav className="bg-gray-800 p-4">
