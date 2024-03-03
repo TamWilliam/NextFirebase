@@ -21,10 +21,9 @@ export default function Register() {
     if (!passwordRegex.test(password)) {
       setError(
         'Le mot de passe doit contenir au moins 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial (@$!%*?&).'
-      );
-      return;
+      )
+      return
     }
-
     // Validation de l'adresse email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -66,13 +65,12 @@ export default function Register() {
         setError("Une erreur s'est produite lors de l'inscription.");
       }
     }
-  };
+  }
 
   const handleChangeEmail = (e) => {
     setEmail(e.target.value);
     setError('');
   };
-
   const handleChangePassword = (e) => {
     setPassword(e.target.value);
     setError('');
