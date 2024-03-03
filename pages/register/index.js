@@ -3,8 +3,7 @@ import { useRouter } from 'next/router'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { db, auth } from '../../firebase/firebase'
 import { setDoc, doc } from 'firebase/firestore'
-
-import 'tailwindcss/tailwind.css'
+import Layout from '../../components/Layout'
 
 export default function Register() {
   const [email, setEmail] = useState('')
@@ -14,6 +13,23 @@ export default function Register() {
 
   const handleSignUp = async (e) => {
     e.preventDefault()
+
+    // Validation du mot de passe
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    if (!passwordRegex.test(password)) {
+      setError(
+        'Le mot de passe doit contenir au moins 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial (@$!%*?&).'
+      )
+      return
+    }
+
+    // Validation de l'adresse email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setError('Adresse email invalide.')
+      return
+    }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -28,7 +44,7 @@ export default function Register() {
         role: 'user'
       })
 
-      router.push('/login')
+      router.push('/')
     } catch (error) {
       if (error.code) {
         switch (error.code) {
@@ -51,43 +67,57 @@ export default function Register() {
     }
   }
 
+  const handleChangeEmail = (e) => {
+    setEmail(e.target.value)
+    setError('')
+  }
+
+  const handleChangePassword = (e) => {
+    setPassword(e.target.value)
+    setError('')
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <form
-        onSubmit={handleSignUp}
-        className="max-w-md p-4 bg-white shadow-md rounded-md"
-      >
-        {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
-
-        <label className="block mb-2 text-sm font-medium text-gray-600">
-          Adresse mail :
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
-            required
-          />
-        </label>
-
-        <label className="block mb-2 text-sm font-medium text-gray-600">
-          Mot de passe :
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md"
-            required
-          />
-        </label>
-
-        <button
-          type="submit"
-          className="text-center text-4xl p-3 text-amber-100 rounded-md w-full bg-green-400 hover:bg-blue-500"
+    <Layout>
+      <div className="min-h-screen flex items-center justify-center">
+        <form
+          onSubmit={handleSignUp}
+          className="max-w-md p-4 bg-white shadow-md rounded-md"
         >
-          S'enregistrer
-        </button>
-      </form>
-    </div>
+          <label className="block mb-2 text-sm font-medium text-gray-600">
+            Adresse mail :
+            <input
+              type="email"
+              value={email}
+              onChange={handleChangeEmail}
+              className="w-full px-3 py-2 border rounded-md"
+              required
+            />
+          </label>
+
+          <label className="block mb-2 text-sm font-medium text-gray-600">
+            Mot de passe (au moins 8 caractères avec au moins une lettre
+            minuscule, une lettre majuscule, un chiffre et un caractère spécial
+            @$!%*?&):
+            <input
+              type="password"
+              value={password}
+              onChange={handleChangePassword}
+              className="w-full px-3 py-2 border rounded-md"
+              required
+            />
+          </label>
+
+          {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
+
+          <button
+            type="submit"
+            className="text-center text-4xl p-3 text-amber-100 rounded-md w-full bg-green-400 hover:bg-blue-500"
+          >
+            S'enregistrer
+          </button>
+        </form>
+      </div>
+    </Layout>
   )
 }
