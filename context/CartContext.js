@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
-import { db } from '../firebase/firebase'
-import { collection, query, where, getDocs, useAuth } from 'firebase/firestore'
+import { db, useAuth } from '../firebase/firebase'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 export const CartContext = createContext()
 
 export const CartProvider = ({ children }) => {
