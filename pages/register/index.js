@@ -1,105 +1,137 @@
-import React, { useState, useContext } from 'react'
-import { AuthContext } from '../../context/AuthContext'
-import {
-  reauthenticateWithCredential,
-  EmailAuthProvider,
-  updatePassword
-} from 'firebase/auth'
+import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { db, auth } from '../../firebase/firebase'
+import { setDoc, doc } from 'firebase/firestore'
 import Layout from '../../components/Layout'
 
-export default function Profile() {
-  const { currentUser } = useContext(AuthContext)
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
+export default function Register() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [role, setRole] = useState('user') // Par défaut, le rôle est défini sur "user"
   const [error, setError] = useState('')
+  const router = useRouter()
 
-  const handlePasswordChange = async (event) => {
-    event.preventDefault()
+  const handleSignUp = async (e) => {
+    e.preventDefault()
 
-    // Validation du nouveau mot de passe
+    // Validation du mot de passe
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-    if (!passwordRegex.test(newPassword)) {
+    if (!passwordRegex.test(password)) {
       setError(
         'Le mot de passe doit contenir au moins 8 caractères avec au moins une lettre minuscule, une lettre majuscule, un chiffre et un caractère spécial (@$!%*?&).'
       )
       return
     }
-
-    // Réauthentification de l'utilisateur
-    const credential = EmailAuthProvider.credential(
-      currentUser.email,
-      currentPassword
-    )
+    // Validation de l'adresse email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setError('Adresse email invalide.')
+      return
+    }
 
     try {
-      await reauthenticateWithCredential(currentUser, credential)
-      await updatePassword(currentUser, newPassword)
-      alert('Password updated successfully!')
-      setNewPassword('')
-      setCurrentPassword('')
-    } catch (error) {
-      setError(
-        'Failed to update password. Make sure your current password is correct.'
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
       )
-      console.error('Error updating password:', error)
+      const user = userCredential.user
+
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        role // Utilisez le rôle sélectionné par l'utilisateur
+      })
+
+      router.push('/')
+    } catch (error) {
+      if (error.code) {
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            setError('Cette adresse email est déjà utilisée.')
+            break
+          case 'auth/invalid-email':
+          case 'auth/weak-password':
+            setError(
+              'Adresse email ou mot de passe invalide. 6 caractères minimum'
+            )
+            break
+          default:
+            setError("Une erreur s'est produite lors de l'inscription.")
+            break
+        }
+      } else {
+        setError("Une erreur s'est produite lors de l'inscription.")
+      }
     }
   }
 
-  const handleChange = (setter) => (e) => {
-    setter(e.target.value)
+  const handleChangeEmail = (e) => {
+    setEmail(e.target.value)
     setError('')
+  }
+  const handleChangePassword = (e) => {
+    setPassword(e.target.value)
+    setError('')
+  }
+
+  const handleChangeRole = (e) => {
+    setRole(e.target.value)
   }
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mt-8 text-center">Profile</h1>
-        <div className="max-w-md mx-auto bg-white rounded-md shadow-md p-6 mt-8">
-          <form onSubmit={handlePasswordChange} className="space-y-6">
-            <div>
-              <label
-                htmlFor="currentPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Current Password
-              </label>
-              <input
-                type="password"
-                id="currentPassword"
-                value={currentPassword}
-                onChange={handleChange(setCurrentPassword)}
-                className="mt-1 p-2 w-full rounded-md border border-gray-300"
-                required
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="newPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                New Password
-              </label>
-              <input
-                type="password"
-                id="newPassword"
-                value={newPassword}
-                onChange={handleChange(setNewPassword)}
-                className="mt-1 p-2 w-full rounded-md border border-gray-300"
-                required
-              />
-            </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <div>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-full"
-              >
-                Change Password
-              </button>
-            </div>
-          </form>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <form
+          onSubmit={handleSignUp}
+          className="max-w-md p-4 bg-white shadow-md rounded-md"
+        >
+          <label className="block mb-2 text-sm font-medium text-gray-600">
+            Adresse mail :
+            <input
+              type="email"
+              value={email}
+              onChange={handleChangeEmail}
+              className="w-full px-3 py-2 border rounded-md"
+              required
+            />
+          </label>
+
+          <label className="block mb-2 text-sm font-medium text-gray-600">
+            Mot de passe (au moins 8 caractères avec au moins une lettre
+            minuscule, une lettre majuscule, un chiffre et un caractère spécial
+            @$!%*?&):
+            <input
+              type="password"
+              value={password}
+              onChange={handleChangePassword}
+              className="w-full px-3 py-2 border rounded-md"
+              required
+            />
+          </label>
+
+          <label className="block mb-2 text-sm font-medium text-gray-600">
+            Rôle :
+            <select
+              value={role}
+              onChange={handleChangeRole}
+              className="w-full px-3 py-2 border rounded-md"
+            >
+              <option value="client">Utilisateur</option>
+              <option value="vendeur">Vendeur</option>
+            </select>
+          </label>
+
+          {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
+
+          <button
+            type="submit"
+            className="text-center text-4xl p-3 text-amber-100 rounded-md w-full bg-green-400 hover:bg-blue-500"
+          >
+            S'enregistrer
+          </button>
+        </form>
       </div>
     </Layout>
   )
