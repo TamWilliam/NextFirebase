@@ -54,7 +54,6 @@ const Navbar = () => {
           <li className="flex items-center">
             <Link href="/cart" className="text-white mr-4">
               <FontAwesomeIcon icon={faShoppingCart} />
-              adafd : {cartItemCount}
               {cartItemCount >= 0 && (
                 <span className="ml-1 text-white">{cartItemCount}</span>
               )}
