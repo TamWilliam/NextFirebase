@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { auth, db } from '../firebase/firebase'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons'
@@ -7,6 +8,7 @@ import { doc, onSnapshot } from 'firebase/firestore'
 
 const Navbar = () => {
   const [cartItemCount, setCartItemCount] = useState(0)
+  const router = useRouter()
 
   useEffect(() => {
     let unsubscribe = () => {}
@@ -34,6 +36,7 @@ const Navbar = () => {
   const handleSignOut = async () => {
     try {
       await auth.signOut()
+      router.push('/');
     } catch (error) {
       console.error('Erreur lors de la déconnexion :', error)
     }
@@ -51,7 +54,8 @@ const Navbar = () => {
           <li className="flex items-center">
             <Link href="/cart" className="text-white mr-4">
               <FontAwesomeIcon icon={faShoppingCart} />
-              {cartItemCount > 0 && (
+              adafd : {cartItemCount}
+              {cartItemCount >= 0 && (
                 <span className="ml-1 text-white">{cartItemCount}</span>
               )}
             </Link>

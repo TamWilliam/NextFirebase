@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore'
 import { getDownloadURL, ref, getStorage } from 'firebase/storage'
 import { db, useAuth } from '../../../firebase/firebase'
 import Layout from '../../../components/Layout'
@@ -38,31 +38,32 @@ export default function ProductPage() {
     fetchProduct()
   }, [uid, router])
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (produit) => {
     if (!user) {
-      alert('Veuillez vous connecter pour ajouter des articles au panier.')
-      return
+      alert('Veuillez vous connecter pour ajouter des articles au panier.');
+      return;
     }
-
-    const userCartRef = doc(db, 'carts', user.uid)
-    const userCartDoc = await getDoc(userCartRef)
-    const userCartData = userCartDoc.exists() ? userCartDoc.data() : {}
-
-    if (userCartData[product.id]) {
-      // Increase quantity by 1 if product already exists in the cart
-      const newQuantity = userCartData[product.id].quantity + 1
+  
+    const userCartRef = doc(db, 'carts', user.uid);
+    const userCartDoc = await getDoc(userCartRef);
+  
+    if (userCartDoc.exists()) {
+      // Si le panier existe déjà, mettez à jour le document avec le nouveau produit ou augmentez la quantité
+      const userCartData = userCartDoc.data();
+      const existingProduct = userCartData[produit.id];
+      const newQuantity = existingProduct ? Number(existingProduct.quantity) + 1 : 1; // Assurez-vous que la quantité est traitée comme un nombre
       await updateDoc(userCartRef, {
-        [`${product.id}.quantity`]: newQuantity
-      })
+        [`${produit.id}`]: { ...produit, quantity: newQuantity, imageUrl: produit.imageUrl || defaultImage },
+      });
     } else {
-      // Add product with quantity of 1 if it does not exist in the cart
-      await updateDoc(userCartRef, {
-        [product.id]: { ...product, quantity: 1 }
-      })
+      // Si le panier n'existe pas, créez le document avec le produit comme première entrée
+      await setDoc(userCartRef, {
+        [produit.id]: { ...produit, quantity: 1, imageUrl: produit.imageUrl || defaultImage },
+      });
     }
-
-    alert('Produit ajouté au panier !')
-  }
+  
+    alert('Produit ajouté au panier !');
+  };
 
   if (!product) return <div>Loading...</div>
 

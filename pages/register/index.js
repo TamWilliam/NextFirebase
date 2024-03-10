@@ -39,9 +39,10 @@ export default function Register() {
       );
       const user = userCredential.user;
 
+      // Créer un profil utilisateur
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
-        role: role // Utilisez le rôle sélectionné par l'utilisateur
+        role: role, // Utilisez le rôle sélectionné par l'utilisateur
       });
 
       router.push('/');

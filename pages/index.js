@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import Link from 'next/link'
-import { collection, getDocs, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { collection, getDocs, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { db, useAuth } from '../firebase/firebase'
 
@@ -38,27 +38,30 @@ export default function VoirProduits() {
 
   const handleAddToCart = async (produit) => {
     if (!user) {
-      alert('Veuillez vous connecter pour ajouter des articles au panier.')
-      return
+      alert('Veuillez vous connecter pour ajouter des articles au panier.');
+      return;
     }
-
-    const userCartRef = doc(db, 'carts', user.uid)
-    const userCartDoc = await getDoc(userCartRef)
-    const userCartData = userCartDoc.exists() ? userCartDoc.data() : {}
-
-    if (userCartData[produit.id]) {
-      const newQuantity = userCartData[produit.id].quantity + 1
+  
+    const userCartRef = doc(db, 'carts', user.uid);
+    const userCartDoc = await getDoc(userCartRef);
+  
+    if (userCartDoc.exists()) {
+      // Si le panier existe déjà, mettez à jour le document avec le nouveau produit ou augmentez la quantité
+      const userCartData = userCartDoc.data();
+      const existingProduct = userCartData[produit.id];
+      const newQuantity = existingProduct ? Number(existingProduct.quantity) + 1 : 1; // Assurez-vous que la quantité est traitée comme un nombre
       await updateDoc(userCartRef, {
-        [`${produit.id}.quantity`]: newQuantity
-      })
+        [`${produit.id}`]: { ...produit, quantity: newQuantity, imageUrl: produit.imageUrl || defaultImage },
+      });
     } else {
-      await updateDoc(userCartRef, {
-        [produit.id]: { ...produit, quantity: 1 }
-      })
+      // Si le panier n'existe pas, créez le document avec le produit comme première entrée
+      await setDoc(userCartRef, {
+        [produit.id]: { ...produit, quantity: 1, imageUrl: produit.imageUrl || defaultImage },
+      });
     }
-
-    alert('Produit ajouté au panier !')
-  }
+  
+    alert('Produit ajouté au panier !');
+  };
 
   if (loading) {
     return <div>Loading...</div>
