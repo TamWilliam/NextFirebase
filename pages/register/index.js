@@ -42,14 +42,8 @@ export default function Register() {
       // Créer un profil utilisateur
       await setDoc(doc(db, 'users', user.uid), {
         email: user.email,
-<<<<<<< HEAD
-        role: role, // Utilisez le rôle sélectionné par l'utilisateur
+        role: role,
       });
-=======
-        role // Utilisez le rôle sélectionné par l'utilisateur
-      })
->>>>>>> 6b01889e5f36d9c45d9b5c1f3d783986a7c12648
-
       router.push('/')
     } catch (error) {
       if (error.code) {
